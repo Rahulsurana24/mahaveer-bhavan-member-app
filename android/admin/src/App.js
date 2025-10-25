@@ -1,5 +1,5 @@
 /**
- * Mahaveer Bhavan Member App
+ * Mahaveer Bhavan Admin App
  * Main App Component
  */
 
@@ -7,7 +7,7 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import 'react-native-url-polyfill/auto';
-// gesture-handler removed for build compatibility
+import 'react-native-gesture-handler';
 
 import RootNavigator from './navigation';
 import colors from './constants/colors';
