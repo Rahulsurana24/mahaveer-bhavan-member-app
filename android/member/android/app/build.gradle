@@ -1,6 +1,5 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-apply plugin: "com.google.gms.google-services"
 
 /**
  * Mahaveer Bhavan Member App - Android Build Configuration
@@ -108,10 +107,6 @@ dependencies {
 
     // React Native Config
     implementation project(':react-native-config')
-
-    // Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:34.4.0')
-    implementation 'com.google.firebase:firebase-analytics'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
