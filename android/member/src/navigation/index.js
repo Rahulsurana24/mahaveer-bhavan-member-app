@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 
 import AuthNavigator from './AuthNavigator';
@@ -37,7 +37,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from '../constants/colors';
 import CallListener from '../components/CallListener';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
   const [isLoading, setIsLoading] = useState(true);
