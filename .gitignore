@@ -1,0 +1,82 @@
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+*.hprof
+.cxx/
+captures/
+.externalNativeBuild/
+.DS_Store
+
+# iOS
+ios/Pods/
+ios/build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace/
+
+# Temporary
+*.log
+*.swp
+*.swo
+*.tmp
+*~
+
+# Watchman
+.watchmanconfig
+
+# Metro
+.metro-health-check*
+
+# Buck
+buck-out/
+.buckconfig.local
+.buckd/
+
+# Expo
+.expo/
+.expo-shared/
+
+# Debug
+android/app/debug/
+android/app/release/
+
+# Android Keystore
+*.keystore
+*.jks
+
+# React Native
+android/.gradle/
+android/app/build/
+android/build/
