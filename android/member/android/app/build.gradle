@@ -19,7 +19,7 @@ react {
     bundleCommand = "bundle"
 }
 
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 def hermesEnabled = true
 def jscFlavor = 'org.webkit:android-jsc:+'
 
@@ -63,7 +63,7 @@ android {
         release {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
