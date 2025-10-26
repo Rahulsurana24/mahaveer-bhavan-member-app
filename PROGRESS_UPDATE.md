@@ -62,7 +62,7 @@ All required dependencies exist and are functional:
   - Loader ✅
 - ✅ **Utility functions** - formatDate exists (shared/src/utils/dateHelpers.js)
 
-### UI Screens with Theme Support - 65% Complete
+### UI Screens with Theme Support - 80% Complete
 
 #### Fully Themed Screens ✅
 1. **DashboardHome** - Complete theme support
@@ -127,6 +127,50 @@ All required dependencies exist and are functional:
    - Info box with theme colors
    - Professional appearance maintained
 
+8. **EventDetailScreen** - Full theme support (NEW)
+   - Hero image with gradient overlay
+   - Event title and registration badge themed
+   - Info rows (date, time, location, organizer, capacity)
+   - Description section with expand/collapse
+   - Pricing section with fee structure
+   - Registration details for confirmed attendees
+   - Action buttons themed
+   - Error and loading states
+
+9. **EventRegistrationScreen** - Full theme support (NEW)
+   - Multi-section registration form themed
+   - Number of attendees selector
+   - Additional attendees inputs
+   - Dietary preferences checkboxes
+   - Special requests textarea
+   - Emergency contact fields
+   - Payment method radio buttons
+   - Terms checkbox
+   - Submit button with fee display
+
+10. **EditProfileScreen** - Full theme support (NEW)
+    - Header with back button
+    - Non-editable fields display (name, member ID, membership type)
+    - Contact information form (mobile, WhatsApp, email)
+    - Address form with state picker dropdown
+    - Blood group selector grid
+    - Emergency contact section
+    - All form inputs themed
+    - Validation error messages themed
+
+11. **LoginScreen** - Full theme support (NEW)
+    - Placeholder screen themed
+    - Icon and text adapted to theme
+    - Background and text colors dynamic
+
+12. **RegisterScreen** - Full theme support (NEW)
+    - 4-step registration wizard
+    - Step indicator with progress circles
+    - Active/completed step styling
+    - Step content sections themed
+    - Bottom action buttons
+    - Navigation between steps
+
 ---
 
 ## 🔄 IN PROGRESS
@@ -190,7 +234,7 @@ All required dependencies exist and are functional:
 
 ## 📊 Progress Statistics
 
-**Overall Progress:** ~65% Complete
+**Overall Progress:** ~80% Complete
 
 | Category | Status | Progress |
 |----------|--------|----------|
@@ -198,13 +242,14 @@ All required dependencies exist and are functional:
 | Navigation | ✅ Complete | 100% |
 | Dashboard | ✅ Complete | 100% |
 | Dependencies | ✅ Complete | 100% |
-| Core Screens | ✅ Complete | 65% |
-| Auth Screens | 🔄 Partial | 50% |
-| Modal Screens | 🔄 Partial | 30% |
+| Core Screens | ✅ Complete | 85% |
+| Auth Screens | ✅ Complete | 100% |
+| Modal Screens | 🔄 Partial | 40% |
 
-**Screens Themed:** 7/15 (Dashboard, MoreMenu, EventsList, Gallery, Messages, Profile, IDCard)
-**Time Invested:** ~9 hours
-**Time Remaining:** ~6-8 hours
+**Screens Themed:** 12/15
+**Major Screens:** Dashboard, MoreMenu, EventsList, Gallery, Messages, Profile, IDCard, EventDetail, EventRegistration, EditProfile, Login, Register
+**Time Invested:** ~12 hours
+**Time Remaining:** ~3-4 hours
 
 ---
 
@@ -285,12 +330,14 @@ After completing the mobile UI:
 
 ---
 
-*Last Updated: October 26, 2025 - 3:30 PM*
-*Current Focus: Completing theme support for remaining screens (EventDetail, EditProfile, Auth, Modals)*
+*Last Updated: October 26, 2025 - 4:45 PM*
+*Current Focus: Completing theme support for remaining modal screens (TripDetail, Chat, Notifications)*
 
 **Latest Achievements:**
-- ✅ 7 major screens now fully themed (65% complete!)
-- ✅ MessagesScreen, ProfileScreen, and IDCardScreen completed
-- ✅ All major user-facing screens have theme support
-- ✅ Special handling for ID card to maintain professional appearance
-- 🎯 Remaining: Event details, profile editing, auth screens, and modal screens
+- ✅ 12 major screens now fully themed (80% complete!)
+- ✅ EventDetailScreen, EventRegistrationScreen, EditProfileScreen completed
+- ✅ LoginScreen and RegisterScreen completed
+- ✅ ALL High Priority screens complete
+- ✅ ALL Auth screens complete
+- ✅ Comprehensive form screens with validation and dynamic inputs
+- 🎯 Remaining: TripDetailScreen, ChatScreen, and 3-4 modal screens
