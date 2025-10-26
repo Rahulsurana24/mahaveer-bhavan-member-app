@@ -16,10 +16,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTheme } from '../../context/ThemeContext';
 
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import colors from '../../constants/colors';
 import { supabase } from '../../services/supabase/client';
 
 // Step components
@@ -31,6 +31,7 @@ import Step4PhotoUpload from './RegisterSteps/Step4PhotoUpload';
 const MEMBERSHIP_TYPES = ['Tapasvi', 'Karyakarta', 'Shraman', 'Shravak', 'General Member', 'Trustee', 'Labharti'];
 
 export default function RegisterScreen({ navigation }) {
+  const { colors } = useTheme();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -356,15 +357,17 @@ export default function RegisterScreen({ navigation }) {
           <View key={step} style={styles.stepItem}>
             <View style={[
               styles.stepCircle,
-              currentStep >= step && styles.stepCircleActive,
-              currentStep === step && styles.stepCircleCurrent,
+              { backgroundColor: colors.backgroundElevated, borderColor: colors.border },
+              currentStep >= step && { backgroundColor: colors.primary, borderColor: colors.primary },
+              currentStep === step && { borderWidth: 3, borderColor: colors.primaryLight },
             ]}>
               {currentStep > step ? (
-                <Icon name="checkmark" size={16} color={colors.textPrimary} />
+                <Icon name="checkmark" size={16} color="#FFFFFF" />
               ) : (
                 <Text style={[
                   styles.stepNumber,
-                  currentStep >= step && styles.stepNumberActive,
+                  { color: colors.textTertiary },
+                  currentStep >= step && { color: '#FFFFFF' },
                 ]}>
                   {step}
                 </Text>
@@ -373,7 +376,8 @@ export default function RegisterScreen({ navigation }) {
             {step < 4 && (
               <View style={[
                 styles.stepLine,
-                currentStep > step && styles.stepLineActive,
+                { backgroundColor: colors.border },
+                currentStep > step && { backgroundColor: colors.primary },
               ]} />
             )}
           </View>
@@ -407,13 +411,13 @@ export default function RegisterScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Icon name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Registration</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Registration</Text>
         <View style={styles.headerRight} />
       </View>
 
@@ -431,14 +435,14 @@ export default function RegisterScreen({ navigation }) {
       </ScrollView>
 
       {/* Bottom Actions */}
-      <View style={styles.bottomActions}>
+      <View style={[styles.bottomActions, { borderTopColor: colors.border, backgroundColor: colors.backgroundElevated }]}>
         <Button
           title={currentStep === 4 ? 'Complete Registration' : 'Next'}
           onPress={handleNext}
           loading={loading}
           disabled={loading}
         />
-        <Text style={styles.stepText}>
+        <Text style={[styles.stepText, { color: colors.textSecondary }]}>
           Step {currentStep} of 4
         </Text>
       </View>
@@ -449,7 +453,6 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -458,7 +461,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   backButton: {
     padding: 8,
@@ -466,7 +468,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textPrimary,
   },
   headerRight: {
     width: 40,
@@ -486,37 +487,23 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.backgroundSecondary,
     borderWidth: 2,
-    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepCircleActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  stepCircleCurrent: {
-    borderWidth: 3,
-    borderColor: colors.primaryLight,
-  },
+  stepCircleActive: {},
+  stepCircleCurrent: {},
   stepNumber: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textTertiary,
   },
-  stepNumberActive: {
-    color: colors.textPrimary,
-  },
+  stepNumberActive: {},
   stepLine: {
     width: 40,
     height: 2,
-    backgroundColor: colors.border,
     marginHorizontal: 4,
   },
-  stepLineActive: {
-    backgroundColor: colors.primary,
-  },
+  stepLineActive: {},
   scrollView: {
     flex: 1,
   },
@@ -526,13 +513,10 @@ const styles = StyleSheet.create({
   bottomActions: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.backgroundElevated,
   },
   stepText: {
     textAlign: 'center',
     fontSize: 14,
-    color: colors.textSecondary,
     marginTop: 12,
   },
 });

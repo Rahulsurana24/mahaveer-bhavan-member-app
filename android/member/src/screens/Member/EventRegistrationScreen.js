@@ -16,13 +16,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Button from '../../components/common/Button';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 export default function EventRegistrationScreen({ route, navigation }) {
   const { event } = route.params;
   const { profile } = useAuth();
+  const { colors } = useTheme();
 
   // Form state
   const [numAttendees, setNumAttendees] = useState(1);
@@ -206,41 +207,41 @@ export default function EventRegistrationScreen({ route, navigation }) {
   const totalFee = calculateFee();
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Icon name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Event Registration</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Event Registration</Text>
         <View style={styles.backButton} />
       </View>
 
       <ScrollView style={styles.scrollView}>
         {/* Event Info */}
-        <View style={styles.eventInfo}>
-          <Text style={styles.eventTitle}>{event.title}</Text>
-          <Text style={styles.eventDate}>
+        <View style={[styles.eventInfo, { backgroundColor: colors.backgroundElevated, borderBottomColor: colors.border }]}>
+          <Text style={[styles.eventTitle, { color: colors.textPrimary }]}>{event.title}</Text>
+          <Text style={[styles.eventDate, { color: colors.textSecondary }]}>
             {new Date(event.start_date).toLocaleDateString()}
           </Text>
         </View>
 
         {/* Number of Attendees */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Number of Attendees</Text>
+        <View style={[styles.section, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Number of Attendees</Text>
           <View style={styles.attendeeSelector}>
             <TouchableOpacity
-              style={styles.attendeeButton}
+              style={[styles.attendeeButton, { backgroundColor: colors.backgroundElevated, borderColor: colors.primary }]}
               onPress={() => handleAttendeesChange(Math.max(1, numAttendees - 1))}
             >
               <Icon name="remove" size={24} color={colors.primary} />
             </TouchableOpacity>
-            <Text style={styles.attendeeCount}>{numAttendees}</Text>
+            <Text style={[styles.attendeeCount, { color: colors.textPrimary }]}>{numAttendees}</Text>
             <TouchableOpacity
-              style={styles.attendeeButton}
+              style={[styles.attendeeButton, { backgroundColor: colors.backgroundElevated, borderColor: colors.primary }]}
               onPress={() => handleAttendeesChange(Math.min(10, numAttendees + 1))}
             >
               <Icon name="add" size={24} color={colors.primary} />
@@ -250,13 +251,13 @@ export default function EventRegistrationScreen({ route, navigation }) {
 
         {/* Additional Attendees */}
         {additionalAttendees.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Additional Attendees</Text>
+          <View style={[styles.section, { borderBottomColor: colors.border }]}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Additional Attendees</Text>
             {additionalAttendees.map((attendee, index) => (
               <View key={index} style={styles.additionalAttendee}>
-                <Text style={styles.label}>Attendee {index + 2}</Text>
+                <Text style={[styles.label, { color: colors.textSecondary }]}>Attendee {index + 2}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { backgroundColor: colors.backgroundElevated, color: colors.textPrimary, borderColor: colors.border }]}
                   placeholder="Full Name"
                   placeholderTextColor={colors.textTertiary}
                   value={attendee.name}
@@ -267,7 +268,7 @@ export default function EventRegistrationScreen({ route, navigation }) {
                   }}
                 />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, { backgroundColor: colors.backgroundElevated, color: colors.textPrimary, borderColor: colors.border }]}
                   placeholder="Relation (Optional)"
                   placeholderTextColor={colors.textTertiary}
                   value={attendee.relation}
@@ -283,8 +284,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
         )}
 
         {/* Dietary Preferences */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Dietary Preferences</Text>
+        <View style={[styles.section, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Dietary Preferences</Text>
           <View style={styles.checkboxGroup}>
             {['Vegetarian', 'Vegan', 'Jain', 'Gluten-free', 'None'].map((pref) => (
               <TouchableOpacity
@@ -301,17 +302,17 @@ export default function EventRegistrationScreen({ route, navigation }) {
                   size={24}
                   color={colors.primary}
                 />
-                <Text style={styles.checkboxLabel}>{pref}</Text>
+                <Text style={[styles.checkboxLabel, { color: colors.textPrimary }]}>{pref}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
         {/* Special Requests */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Special Requests (Optional)</Text>
+        <View style={[styles.section, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Special Requests (Optional)</Text>
           <TextInput
-            style={styles.textarea}
+            style={[styles.textarea, { backgroundColor: colors.backgroundElevated, color: colors.textPrimary, borderColor: colors.border }]}
             placeholder="Any special requirements or comments..."
             placeholderTextColor={colors.textTertiary}
             value={specialRequests}
@@ -320,14 +321,14 @@ export default function EventRegistrationScreen({ route, navigation }) {
             maxLength={500}
             textAlignVertical="top"
           />
-          <Text style={styles.charCount}>{specialRequests.length}/500</Text>
+          <Text style={[styles.charCount, { color: colors.textTertiary }]}>{specialRequests.length}/500</Text>
         </View>
 
         {/* Emergency Contact */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Emergency Contact</Text>
+        <View style={[styles.section, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Emergency Contact</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.backgroundElevated, color: colors.textPrimary, borderColor: colors.border }]}
             placeholder="Contact Name"
             placeholderTextColor={colors.textTertiary}
             value={emergencyContact.name}
@@ -336,7 +337,7 @@ export default function EventRegistrationScreen({ route, navigation }) {
             }
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.backgroundElevated, color: colors.textPrimary, borderColor: colors.border }]}
             placeholder="Contact Phone"
             placeholderTextColor={colors.textTertiary}
             value={emergencyContact.phone}
@@ -349,13 +350,13 @@ export default function EventRegistrationScreen({ route, navigation }) {
         </View>
 
         {/* Payment Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Payment</Text>
+        <View style={[styles.section, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Payment</Text>
 
           {/* Total Fee */}
-          <View style={styles.totalFeeCard}>
-            <Text style={styles.totalFeeLabel}>Total Amount</Text>
-            <Text style={styles.totalFeeValue}>
+          <View style={[styles.totalFeeCard, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.totalFeeLabel, { color: '#FFFFFF' }]}>Total Amount</Text>
+            <Text style={[styles.totalFeeValue, { color: '#FFFFFF' }]}>
               {totalFee > 0 ? `₹${totalFee}` : 'Free'}
             </Text>
           </View>
@@ -366,7 +367,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
               <TouchableOpacity
                 style={[
                   styles.paymentMethod,
-                  paymentMethod === 'online' && styles.paymentMethodActive,
+                  { backgroundColor: colors.backgroundElevated },
+                  paymentMethod === 'online' && { borderColor: colors.primary },
                 ]}
                 onPress={() => setPaymentMethod('online')}
               >
@@ -380,8 +382,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
                   color={colors.primary}
                 />
                 <View style={styles.paymentMethodText}>
-                  <Text style={styles.paymentMethodTitle}>Online Payment</Text>
-                  <Text style={styles.paymentMethodSubtitle}>
+                  <Text style={[styles.paymentMethodTitle, { color: colors.textPrimary }]}>Online Payment</Text>
+                  <Text style={[styles.paymentMethodSubtitle, { color: colors.textSecondary }]}>
                     Pay via Razorpay (Cards, UPI, Wallet)
                   </Text>
                 </View>
@@ -390,7 +392,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
               <TouchableOpacity
                 style={[
                   styles.paymentMethod,
-                  paymentMethod === 'offline' && styles.paymentMethodActive,
+                  { backgroundColor: colors.backgroundElevated },
+                  paymentMethod === 'offline' && { borderColor: colors.primary },
                 ]}
                 onPress={() => setPaymentMethod('offline')}
               >
@@ -404,8 +407,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
                   color={colors.primary}
                 />
                 <View style={styles.paymentMethodText}>
-                  <Text style={styles.paymentMethodTitle}>Bank Transfer</Text>
-                  <Text style={styles.paymentMethodSubtitle}>
+                  <Text style={[styles.paymentMethodTitle, { color: colors.textPrimary }]}>Bank Transfer</Text>
+                  <Text style={[styles.paymentMethodSubtitle, { color: colors.textSecondary }]}>
                     Transfer to our account (details will be sent)
                   </Text>
                 </View>
@@ -414,7 +417,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
               <TouchableOpacity
                 style={[
                   styles.paymentMethod,
-                  paymentMethod === 'pay_at_event' && styles.paymentMethodActive,
+                  { backgroundColor: colors.backgroundElevated },
+                  paymentMethod === 'pay_at_event' && { borderColor: colors.primary },
                 ]}
                 onPress={() => setPaymentMethod('pay_at_event')}
               >
@@ -428,8 +432,8 @@ export default function EventRegistrationScreen({ route, navigation }) {
                   color={colors.primary}
                 />
                 <View style={styles.paymentMethodText}>
-                  <Text style={styles.paymentMethodTitle}>Pay at Event</Text>
-                  <Text style={styles.paymentMethodSubtitle}>
+                  <Text style={[styles.paymentMethodTitle, { color: colors.textPrimary }]}>Pay at Event</Text>
+                  <Text style={[styles.paymentMethodSubtitle, { color: colors.textSecondary }]}>
                     Pay cash at the event venue
                   </Text>
                 </View>
@@ -439,7 +443,7 @@ export default function EventRegistrationScreen({ route, navigation }) {
         </View>
 
         {/* Terms and Conditions */}
-        <View style={styles.section}>
+        <View style={[styles.section, { borderBottomColor: colors.border }]}>
           <TouchableOpacity
             style={styles.checkbox}
             onPress={() => setAgreedToTerms(!agreedToTerms)}
@@ -449,7 +453,7 @@ export default function EventRegistrationScreen({ route, navigation }) {
               size={24}
               color={colors.primary}
             />
-            <Text style={styles.checkboxLabel}>
+            <Text style={[styles.checkboxLabel, { color: colors.textPrimary }]}>
               I agree to the terms and conditions
             </Text>
           </TouchableOpacity>
@@ -457,7 +461,7 @@ export default function EventRegistrationScreen({ route, navigation }) {
       </ScrollView>
 
       {/* Submit Button */}
-      <SafeAreaView style={styles.footer} edges={['bottom']}>
+      <SafeAreaView style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]} edges={['bottom']}>
         <Button
           title={`Confirm Registration${totalFee > 0 ? ` - ₹${totalFee}` : ''}`}
           onPress={handleSubmit}
@@ -474,7 +478,6 @@ export default function EventRegistrationScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -483,7 +486,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -494,36 +496,29 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   scrollView: {
     flex: 1,
   },
   eventInfo: {
     padding: 16,
-    backgroundColor: colors.backgroundElevated,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   eventTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   eventDate: {
     fontSize: 14,
-    color: colors.textSecondary,
   },
   section: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 12,
   },
   attendeeSelector: {
@@ -536,16 +531,13 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.backgroundElevated,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: colors.primary,
   },
   attendeeCount: {
     fontSize: 32,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   additionalAttendee: {
     marginBottom: 16,
@@ -553,34 +545,26 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginBottom: 8,
   },
   input: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 15,
-    color: colors.textPrimary,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   textarea: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 15,
-    color: colors.textPrimary,
     minHeight: 100,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   charCount: {
     fontSize: 12,
-    color: colors.textTertiary,
     textAlign: 'right',
     marginTop: 4,
   },
@@ -594,10 +578,8 @@ const styles = StyleSheet.create({
   },
   checkboxLabel: {
     fontSize: 15,
-    color: colors.textPrimary,
   },
   totalFeeCard: {
-    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -608,12 +590,10 @@ const styles = StyleSheet.create({
   totalFeeLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
   },
   totalFeeValue: {
     fontSize: 28,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   paymentMethods: {
     gap: 12,
@@ -621,35 +601,28 @@ const styles = StyleSheet.create({
   paymentMethod: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     gap: 12,
     borderWidth: 2,
     borderColor: 'transparent',
   },
-  paymentMethodActive: {
-    borderColor: colors.primary,
-  },
+  paymentMethodActive: {},
   paymentMethodText: {
     flex: 1,
   },
   paymentMethodTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   paymentMethodSubtitle: {
     fontSize: 13,
-    color: colors.textSecondary,
   },
   footer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
   },
   submitButton: {
     width: '100%',

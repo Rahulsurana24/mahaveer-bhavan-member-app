@@ -15,10 +15,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -33,6 +33,7 @@ const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 export default function EditProfileScreen({ navigation }) {
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const [showStatePicker, setShowStatePicker] = useState(false);
 
@@ -201,7 +202,7 @@ export default function EditProfileScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -211,42 +212,42 @@ export default function EditProfileScreen({ navigation }) {
           >
             <Icon name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Edit Profile</Text>
           <View style={styles.backButton} />
         </View>
 
         {/* Non-Editable Info */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Basic Information</Text>
-          <Text style={styles.sectionNote}>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Basic Information</Text>
+          <Text style={[styles.sectionNote, { color: colors.textSecondary }]}>
             These fields cannot be edited. Contact admin if changes are needed.
           </Text>
 
-          <View style={styles.disabledField}>
-            <Text style={styles.disabledLabel}>Full Name</Text>
-            <Text style={styles.disabledValue}>{profile?.full_name || 'N/A'}</Text>
+          <View style={[styles.disabledField, { backgroundColor: colors.backgroundElevated }]}>
+            <Text style={[styles.disabledLabel, { color: colors.textTertiary }]}>Full Name</Text>
+            <Text style={[styles.disabledValue, { color: colors.textSecondary }]}>{profile?.full_name || 'N/A'}</Text>
           </View>
-          <View style={styles.disabledField}>
-            <Text style={styles.disabledLabel}>Member ID</Text>
-            <Text style={styles.disabledValue}>{profile?.member_id || 'N/A'}</Text>
+          <View style={[styles.disabledField, { backgroundColor: colors.backgroundElevated }]}>
+            <Text style={[styles.disabledLabel, { color: colors.textTertiary }]}>Member ID</Text>
+            <Text style={[styles.disabledValue, { color: colors.textSecondary }]}>{profile?.member_id || 'N/A'}</Text>
           </View>
-          <View style={styles.disabledField}>
-            <Text style={styles.disabledLabel}>Membership Type</Text>
-            <Text style={styles.disabledValue}>{profile?.membership_type || 'N/A'}</Text>
+          <View style={[styles.disabledField, { backgroundColor: colors.backgroundElevated }]}>
+            <Text style={[styles.disabledLabel, { color: colors.textTertiary }]}>Membership Type</Text>
+            <Text style={[styles.disabledValue, { color: colors.textSecondary }]}>{profile?.membership_type || 'N/A'}</Text>
           </View>
-          <View style={styles.disabledField}>
-            <Text style={styles.disabledLabel}>Date of Birth</Text>
-            <Text style={styles.disabledValue}>{profile?.date_of_birth || 'N/A'}</Text>
+          <View style={[styles.disabledField, { backgroundColor: colors.backgroundElevated }]}>
+            <Text style={[styles.disabledLabel, { color: colors.textTertiary }]}>Date of Birth</Text>
+            <Text style={[styles.disabledValue, { color: colors.textSecondary }]}>{profile?.date_of_birth || 'N/A'}</Text>
           </View>
-          <View style={styles.disabledField}>
-            <Text style={styles.disabledLabel}>Gender</Text>
-            <Text style={styles.disabledValue}>{profile?.gender || 'N/A'}</Text>
+          <View style={[styles.disabledField, { backgroundColor: colors.backgroundElevated }]}>
+            <Text style={[styles.disabledLabel, { color: colors.textTertiary }]}>Gender</Text>
+            <Text style={[styles.disabledValue, { color: colors.textSecondary }]}>{profile?.gender || 'N/A'}</Text>
           </View>
         </View>
 
         {/* Contact Information */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact Information</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Contact Information</Text>
 
           <Input
             label="Mobile Number *"
@@ -256,7 +257,7 @@ export default function EditProfileScreen({ navigation }) {
             error={errors.mobile}
             keyboardType="phone-pad"
             maxLength={10}
-            leftIcon={<Text style={styles.countryCode}>+91</Text>}
+            leftIcon={<Text style={[styles.countryCode, { color: colors.textSecondary }]}>+91</Text>}
           />
 
           <Input
@@ -267,7 +268,7 @@ export default function EditProfileScreen({ navigation }) {
             error={errors.whatsapp}
             keyboardType="phone-pad"
             maxLength={10}
-            leftIcon={<Text style={styles.countryCode}>+91</Text>}
+            leftIcon={<Text style={[styles.countryCode, { color: colors.textSecondary }]}>+91</Text>}
           />
 
           <Input
@@ -283,7 +284,7 @@ export default function EditProfileScreen({ navigation }) {
 
         {/* Address */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Address</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Address</Text>
 
           <Input
             label="Address Line 1 *"
@@ -314,15 +315,20 @@ export default function EditProfileScreen({ navigation }) {
               />
             </View>
             <View style={styles.rowItem}>
-              <Text style={styles.label}>State *</Text>
+              <Text style={[styles.label, { color: colors.textPrimary }]}>State *</Text>
               <TouchableOpacity
-                style={[styles.stateButton, errors.state && styles.stateButtonError]}
+                style={[
+                  styles.stateButton,
+                  { backgroundColor: colors.backgroundElevated, borderColor: colors.border },
+                  errors.state && { borderColor: colors.error }
+                ]}
                 onPress={() => setShowStatePicker(!showStatePicker)}
               >
                 <Text
                   style={[
                     styles.stateText,
-                    !formData.state && styles.statePlaceholder,
+                    { color: colors.textPrimary },
+                    !formData.state && { color: colors.textTertiary },
                   ]}
                 >
                   {formData.state || 'Select'}
@@ -334,7 +340,7 @@ export default function EditProfileScreen({ navigation }) {
                 />
               </TouchableOpacity>
               {errors.state && (
-                <Text style={styles.errorText}>{errors.state}</Text>
+                <Text style={[styles.errorText, { color: colors.error }]}>{errors.state}</Text>
               )}
             </View>
           </View>
@@ -343,7 +349,7 @@ export default function EditProfileScreen({ navigation }) {
           {showStatePicker && (
             <View style={styles.statePickerContainer}>
               <ScrollView
-                style={styles.statePicker}
+                style={[styles.statePicker, { backgroundColor: colors.backgroundElevated, borderColor: colors.border }]}
                 nestedScrollEnabled
                 keyboardShouldPersistTaps="handled"
               >
@@ -352,7 +358,8 @@ export default function EditProfileScreen({ navigation }) {
                     key={state}
                     style={[
                       styles.stateOption,
-                      formData.state === state && styles.stateOptionSelected,
+                      { borderBottomColor: colors.border },
+                      formData.state === state && { backgroundColor: colors.primary + '20' },
                     ]}
                     onPress={() => {
                       updateFormData('state', state);
@@ -362,7 +369,8 @@ export default function EditProfileScreen({ navigation }) {
                     <Text
                       style={[
                         styles.stateOptionText,
-                        formData.state === state && styles.stateOptionTextSelected,
+                        { color: colors.textPrimary },
+                        formData.state === state && { fontWeight: '600', color: colors.primary },
                       ]}
                     >
                       {state}
@@ -386,24 +394,26 @@ export default function EditProfileScreen({ navigation }) {
 
         {/* Blood Group */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Medical Information</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Medical Information</Text>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Blood Group (Optional)</Text>
+            <Text style={[styles.label, { color: colors.textPrimary }]}>Blood Group (Optional)</Text>
             <View style={styles.bloodGroupGrid}>
               {BLOOD_GROUPS.map((bg) => (
                 <TouchableOpacity
                   key={bg}
                   style={[
                     styles.bloodGroupButton,
-                    formData.bloodGroup === bg && styles.bloodGroupButtonSelected,
+                    { backgroundColor: colors.backgroundElevated, borderColor: colors.border },
+                    formData.bloodGroup === bg && { backgroundColor: colors.primary, borderColor: colors.primary },
                   ]}
                   onPress={() => updateFormData('bloodGroup', bg)}
                 >
                   <Text
                     style={[
                       styles.bloodGroupText,
-                      formData.bloodGroup === bg && styles.bloodGroupTextSelected,
+                      { color: colors.textSecondary },
+                      formData.bloodGroup === bg && { color: '#FFFFFF' },
                     ]}
                   >
                     {bg}
@@ -416,7 +426,7 @@ export default function EditProfileScreen({ navigation }) {
 
         {/* Emergency Contact */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Emergency Contact</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Emergency Contact</Text>
 
           <Input
             label="Contact Name"
@@ -434,7 +444,7 @@ export default function EditProfileScreen({ navigation }) {
             error={errors.emergencyPhone}
             keyboardType="phone-pad"
             maxLength={10}
-            leftIcon={<Text style={styles.countryCode}>+91</Text>}
+            leftIcon={<Text style={[styles.countryCode, { color: colors.textSecondary }]}>+91</Text>}
           />
 
           <Input
@@ -463,7 +473,6 @@ export default function EditProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -481,7 +490,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   section: {
     marginBottom: 24,
@@ -490,17 +498,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 8,
   },
   sectionNote: {
     fontSize: 13,
-    color: colors.textSecondary,
     marginBottom: 16,
     fontStyle: 'italic',
   },
   disabledField: {
-    backgroundColor: colors.backgroundSecondary,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -508,18 +513,15 @@ const styles = StyleSheet.create({
   },
   disabledLabel: {
     fontSize: 12,
-    color: colors.textTertiary,
     marginBottom: 4,
   },
   disabledValue: {
     fontSize: 14,
-    color: colors.textSecondary,
     fontWeight: '500',
   },
   countryCode: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginRight: 8,
   },
   row: {
@@ -532,33 +534,24 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginBottom: 8,
   },
   stateButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.backgroundSecondary,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
-  stateButtonError: {
-    borderColor: colors.error,
-  },
+  stateButtonError: {},
   stateText: {
     fontSize: 16,
-    color: colors.textPrimary,
   },
-  statePlaceholder: {
-    color: colors.textTertiary,
-  },
+  statePlaceholder: {},
   errorText: {
     fontSize: 12,
-    color: colors.error,
     marginTop: 4,
   },
   statePickerContainer: {
@@ -567,28 +560,19 @@ const styles = StyleSheet.create({
   },
   statePicker: {
     maxHeight: 200,
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   stateOption: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  stateOptionSelected: {
-    backgroundColor: colors.primary + '20',
-  },
+  stateOptionSelected: {},
   stateOptionText: {
     fontSize: 14,
-    color: colors.textPrimary,
   },
-  stateOptionTextSelected: {
-    fontWeight: '600',
-    color: colors.primary,
-  },
+  stateOptionTextSelected: {},
   inputContainer: {
     marginBottom: 20,
   },
@@ -599,25 +583,17 @@ const styles = StyleSheet.create({
   },
   bloodGroupButton: {
     width: '22%',
-    backgroundColor: colors.backgroundSecondary,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
   },
-  bloodGroupButtonSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
+  bloodGroupButtonSelected: {},
   bloodGroupText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textSecondary,
   },
-  bloodGroupTextSelected: {
-    color: colors.textPrimary,
-  },
+  bloodGroupTextSelected: {},
   buttonContainer: {
     paddingHorizontal: 16,
     paddingBottom: 32,
