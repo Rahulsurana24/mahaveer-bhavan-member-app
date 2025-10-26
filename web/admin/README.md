@@ -2,6 +2,21 @@
 
 A modern, responsive web administration portal for managing the Mahaveer Bhavan community platform.
 
+## 🌐 Quick Deploy
+
+**Deploy to Netlify (Recommended):**
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start)
+
+See [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md) for complete deployment guide with step-by-step instructions.
+
+**Quick Steps:**
+1. Push code to GitHub
+2. Connect to Netlify
+3. Configure: Base = `web/admin`, Build = `npm run build`, Publish = `dist`
+4. Add environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+5. Deploy! ✨
+
 ## 🚀 Tech Stack
 
 - **React 18** - UI library
