@@ -7,21 +7,8 @@ buildscript {
         compileSdkVersion = 34
         targetSdkVersion = 34
         ndkVersion = "25.1.8937393"
-        kotlinVersion = "1.8.0"
     }
 
-    // Global Kotlin compiler options
-    project.ext.set("kotlin.code.style", "official")
-
-    // Configure all projects with Kotlin
-    allprojects {
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-            kotlinOptions {
-                jvmTarget = "1.8"
-                freeCompilerArgs += ["-Xjvm-default=all", "-Xno-strict-api-mode"]
-            }
-        }
-    }
     repositories {
         google()
         mavenCentral()
