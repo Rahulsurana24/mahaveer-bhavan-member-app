@@ -11,14 +11,18 @@ import RegisterScreen from '../screens/Auth/RegisterScreen';
 import ChangePasswordScreen from '../screens/Auth/ChangePasswordScreen';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
 
+import { useTheme } from '../context/ThemeContext';
+
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator() {
+  const { colors } = useTheme();
+
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        cardStyle: { backgroundColor: '#0A0A0A' },
+        cardStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Screen name="Login" component={LoginScreen} />

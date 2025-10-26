@@ -34,12 +34,13 @@ import StoryViewerScreen from '../screens/Member/StoryViewerScreen';
 
 import { supabase } from '../services/supabase/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import colors from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 import CallListener from '../components/CallListener';
 
 const Stack = createNativeStackNavigator();
 
 export default function RootNavigator() {
+  const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [needsPasswordChange, setNeedsPasswordChange] = useState(false);

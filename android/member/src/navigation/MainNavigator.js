@@ -14,11 +14,13 @@ import MessagesScreen from '../screens/Member/MessagesScreen';
 import EventsListScreen from '../screens/Member/EventsListScreen';
 import MoreMenuScreen from '../screens/Member/MoreMenuScreen';
 
-import colors from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainNavigator() {
+  const { colors } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
