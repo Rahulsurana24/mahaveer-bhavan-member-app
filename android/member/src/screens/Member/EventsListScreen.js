@@ -19,17 +19,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { useTheme } from '../../context/ThemeContext';
+import { supabase } from '../../services/supabase/client';
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function EventsListScreen({ navigation }) {
+  const { colors } = useTheme();
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Events & Trips</Text>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Events & Trips</Text>
       </View>
 
       {/* Tabs */}
@@ -70,6 +72,7 @@ export default function EventsListScreen({ navigation }) {
  * Events Tab
  */
 function EventsTab({ navigation }) {
+  const { colors } = useTheme();
   const { profile } = useAuth();
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -136,17 +139,17 @@ function EventsTab({ navigation }) {
   }, []);
 
   const renderEvent = ({ item }) => (
-    <EventCard event={item} navigation={navigation} />
+    <EventCard event={item} navigation={navigation} colors={colors} />
   );
 
   return (
     <View style={styles.tabContainer}>
       {/* Search and Filter */}
-      <View style={styles.searchFilterContainer}>
-        <View style={styles.searchBar}>
+      <View style={[styles.searchFilterContainer, { borderBottomColor: colors.border }]}>
+        <View style={[styles.searchBar, { backgroundColor: colors.backgroundElevated }]}>
           <Icon name="search-outline" size={20} color={colors.textTertiary} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: colors.textPrimary }]}
             placeholder="Search events..."
             placeholderTextColor={colors.textTertiary}
             value={searchQuery}
@@ -158,13 +161,19 @@ function EventsTab({ navigation }) {
           {['upcoming', 'past', 'all'].map((f) => (
             <TouchableOpacity
               key={f}
-              style={[styles.filterChip, filter === f && styles.filterChipActive]}
+              style={[
+                styles.filterChip,
+                {
+                  backgroundColor: filter === f ? colors.primary : colors.backgroundElevated,
+                  borderColor: filter === f ? colors.primary : colors.border
+                }
+              ]}
               onPress={() => setFilter(f)}
             >
               <Text
                 style={[
                   styles.filterChipText,
-                  filter === f && styles.filterChipTextActive,
+                  { color: filter === f ? '#FFFFFF' : colors.textSecondary }
                 ]}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -194,7 +203,7 @@ function EventsTab({ navigation }) {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Icon name="calendar-outline" size={64} color={colors.textTertiary} />
-              <Text style={styles.emptyText}>No events found</Text>
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No events found</Text>
             </View>
           }
           contentContainerStyle={
@@ -210,6 +219,7 @@ function EventsTab({ navigation }) {
  * Trips Tab
  */
 function TripsTab({ navigation }) {
+  const { colors } = useTheme();
   const { profile } = useAuth();
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
@@ -273,17 +283,17 @@ function TripsTab({ navigation }) {
   }, []);
 
   const renderTrip = ({ item }) => (
-    <TripCard trip={item} navigation={navigation} />
+    <TripCard trip={item} navigation={navigation} colors={colors} />
   );
 
   return (
     <View style={styles.tabContainer}>
       {/* Search and Filter */}
-      <View style={styles.searchFilterContainer}>
-        <View style={styles.searchBar}>
+      <View style={[styles.searchFilterContainer, { borderBottomColor: colors.border }]}>
+        <View style={[styles.searchBar, { backgroundColor: colors.backgroundElevated }]}>
           <Icon name="search-outline" size={20} color={colors.textTertiary} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: colors.textPrimary }]}
             placeholder="Search trips..."
             placeholderTextColor={colors.textTertiary}
             value={searchQuery}
@@ -295,13 +305,19 @@ function TripsTab({ navigation }) {
           {['upcoming', 'past', 'all'].map((f) => (
             <TouchableOpacity
               key={f}
-              style={[styles.filterChip, filter === f && styles.filterChipActive]}
+              style={[
+                styles.filterChip,
+                {
+                  backgroundColor: filter === f ? colors.primary : colors.backgroundElevated,
+                  borderColor: filter === f ? colors.primary : colors.border
+                }
+              ]}
               onPress={() => setFilter(f)}
             >
               <Text
                 style={[
                   styles.filterChipText,
-                  filter === f && styles.filterChipTextActive,
+                  { color: filter === f ? '#FFFFFF' : colors.textSecondary }
                 ]}
               >
                 {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -331,7 +347,7 @@ function TripsTab({ navigation }) {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Icon name="airplane-outline" size={64} color={colors.textTertiary} />
-              <Text style={styles.emptyText}>No trips found</Text>
+              <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No trips found</Text>
             </View>
           }
           contentContainerStyle={
@@ -346,7 +362,7 @@ function TripsTab({ navigation }) {
 /**
  * Event Card Component
  */
-function EventCard({ event, navigation }) {
+function EventCard({ event, navigation, colors }) {
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
@@ -360,38 +376,38 @@ function EventCard({ event, navigation }) {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { backgroundColor: colors.backgroundElevated }]}
       onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
       activeOpacity={0.7}
     >
       {/* Event Image */}
       {event.image_url && (
-        <Image source={{ uri: event.image_url }} style={styles.cardImage} />
+        <Image source={{ uri: event.image_url }} style={[styles.cardImage, { backgroundColor: colors.surface }]} />
       )}
 
       {/* Fee Badge */}
-      <View style={styles.feeBadge}>
-        <Text style={styles.feeBadgeText}>
+      <View style={[styles.feeBadge, { backgroundColor: colors.primary }]}>
+        <Text style={[styles.feeBadgeText, { color: '#FFFFFF' }]}>
           {event.base_fee > 0 ? `₹${event.base_fee}` : 'Free'}
         </Text>
       </View>
 
       {/* Status Badge */}
       {!isUpcoming && (
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusBadgeText}>Completed</Text>
+        <View style={[styles.statusBadge, { backgroundColor: colors.textTertiary }]}>
+          <Text style={[styles.statusBadgeText, { color: '#FFFFFF' }]}>Completed</Text>
         </View>
       )}
 
       {/* Card Content */}
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle} numberOfLines={2}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary }]} numberOfLines={2}>
           {event.title}
         </Text>
 
         <View style={styles.cardInfo}>
           <Icon name="calendar-outline" size={16} color={colors.textSecondary} />
-          <Text style={styles.cardInfoText}>
+          <Text style={[styles.cardInfoText, { color: colors.textSecondary }]}>
             {formatDate(event.start_date)}
             {event.end_date && ` - ${formatDate(event.end_date)}`}
           </Text>
@@ -400,7 +416,7 @@ function EventCard({ event, navigation }) {
         {event.location && (
           <View style={styles.cardInfo}>
             <Icon name="location-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.cardInfoText} numberOfLines={1}>
+            <Text style={[styles.cardInfoText, { color: colors.textSecondary }]} numberOfLines={1}>
               {event.location}
             </Text>
           </View>
@@ -409,7 +425,7 @@ function EventCard({ event, navigation }) {
         {event.capacity && (
           <View style={styles.cardInfo}>
             <Icon name="people-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.cardInfoText}>
+            <Text style={[styles.cardInfoText, { color: colors.textSecondary }]}>
               {event.registrations?.[0]?.count || 0} / {event.capacity} registered
             </Text>
           </View>
@@ -422,7 +438,7 @@ function EventCard({ event, navigation }) {
 /**
  * Trip Card Component
  */
-function TripCard({ trip, navigation }) {
+function TripCard({ trip, navigation, colors }) {
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
@@ -436,36 +452,36 @@ function TripCard({ trip, navigation }) {
 
   return (
     <TouchableOpacity
-      style={styles.card}
+      style={[styles.card, { backgroundColor: colors.backgroundElevated }]}
       onPress={() => navigation.navigate('TripDetail', { tripId: trip.id })}
       activeOpacity={0.7}
     >
       {/* Trip Image */}
       {trip.image_url && (
-        <Image source={{ uri: trip.image_url }} style={styles.cardImage} />
+        <Image source={{ uri: trip.image_url }} style={[styles.cardImage, { backgroundColor: colors.surface }]} />
       )}
 
       {/* Price Badge */}
-      <View style={styles.feeBadge}>
-        <Text style={styles.feeBadgeText}>₹{trip.price}</Text>
+      <View style={[styles.feeBadge, { backgroundColor: colors.primary }]}>
+        <Text style={[styles.feeBadgeText, { color: '#FFFFFF' }]}>₹{trip.price}</Text>
       </View>
 
       {/* Status Badge */}
       {!isUpcoming && (
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusBadgeText}>Completed</Text>
+        <View style={[styles.statusBadge, { backgroundColor: colors.textTertiary }]}>
+          <Text style={[styles.statusBadgeText, { color: '#FFFFFF' }]}>Completed</Text>
         </View>
       )}
 
       {/* Card Content */}
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle} numberOfLines={2}>
+        <Text style={[styles.cardTitle, { color: colors.textPrimary }]} numberOfLines={2}>
           {trip.destination}
         </Text>
 
         <View style={styles.cardInfo}>
           <Icon name="calendar-outline" size={16} color={colors.textSecondary} />
-          <Text style={styles.cardInfoText}>
+          <Text style={[styles.cardInfoText, { color: colors.textSecondary }]}>
             {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
           </Text>
         </View>
@@ -473,14 +489,14 @@ function TripCard({ trip, navigation }) {
         {trip.transport_type && (
           <View style={styles.cardInfo}>
             <Icon name="bus-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.cardInfoText}>{trip.transport_type}</Text>
+            <Text style={[styles.cardInfoText, { color: colors.textSecondary }]}>{trip.transport_type}</Text>
           </View>
         )}
 
         {trip.capacity && (
           <View style={styles.cardInfo}>
             <Icon name="people-outline" size={16} color={colors.textSecondary} />
-            <Text style={styles.cardInfoText}>
+            <Text style={[styles.cardInfoText, { color: colors.textSecondary }]}>
               {trip.registrations?.[0]?.count || 0} / {trip.capacity} registered
             </Text>
           </View>
@@ -493,18 +509,15 @@ function TripCard({ trip, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   tabContainer: {
     flex: 1,
@@ -512,12 +525,10 @@ const styles = StyleSheet.create({
   searchFilterContainer: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -527,7 +538,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: colors.textPrimary,
   },
   filterRow: {
     flexDirection: 'row',
@@ -537,21 +547,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: colors.backgroundElevated,
     borderWidth: 1,
-    borderColor: colors.border,
-  },
-  filterChipActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
   filterChipText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textSecondary,
-  },
-  filterChipTextActive: {
-    color: colors.textPrimary,
   },
   loadingContainer: {
     flex: 1,
@@ -559,7 +559,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     marginHorizontal: 16,
     marginBottom: 16,
@@ -568,13 +567,11 @@ const styles = StyleSheet.create({
   cardImage: {
     width: '100%',
     height: 200,
-    backgroundColor: colors.backgroundSecondary,
   },
   feeBadge: {
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -582,13 +579,11 @@ const styles = StyleSheet.create({
   feeBadgeText: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   statusBadge: {
     position: 'absolute',
     top: 12,
     left: 12,
-    backgroundColor: colors.textTertiary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -596,7 +591,6 @@ const styles = StyleSheet.create({
   statusBadgeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.textPrimary,
   },
   cardContent: {
     padding: 16,
@@ -604,7 +598,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 12,
   },
   cardInfo: {
@@ -615,7 +608,6 @@ const styles = StyleSheet.create({
   },
   cardInfoText: {
     fontSize: 14,
-    color: colors.textSecondary,
     flex: 1,
   },
   emptyContainer: {
@@ -630,7 +622,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginTop: 16,
   },
 });

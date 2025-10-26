@@ -22,9 +22,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../../components/common/Avatar';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 import { formatDate } from '../../../shared/src/utils/dateHelpers';
 
 const Tab = createMaterialTopTabNavigator();
@@ -34,11 +34,13 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
  * Main Gallery Screen with Tabs
  */
 export default function GalleryScreen({ navigation }) {
+  const { colors } = useTheme();
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Gallery</Text>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Gallery</Text>
         <TouchableOpacity
           style={styles.uploadButton}
           onPress={() => navigation.navigate('UploadMedia')}
@@ -70,8 +72,12 @@ export default function GalleryScreen({ navigation }) {
           },
         }}
       >
-        <Tab.Screen name="Feed" component={FeedTab} />
-        <Tab.Screen name="Reels" component={ReelsTab} />
+        <Tab.Screen name="Feed">
+          {(props) => <FeedTab {...props} navigation={navigation} />}
+        </Tab.Screen>
+        <Tab.Screen name="Reels">
+          {(props) => <ReelsTab {...props} navigation={navigation} />}
+        </Tab.Screen>
       </Tab.Navigator>
     </SafeAreaView>
   );
@@ -81,6 +87,7 @@ export default function GalleryScreen({ navigation }) {
  * Feed Tab - Instagram-style posts with Stories at top
  */
 function FeedTab({ navigation }) {
+  const { colors } = useTheme();
   const { profile } = useAuth();
   const [posts, setPosts] = useState([]);
   const [stories, setStories] = useState([]);
@@ -280,6 +287,7 @@ function FeedTab({ navigation }) {
       onComment={() => navigation.navigate('Comments', { postId: item.id })}
       onShare={() => handleShare(item)}
       navigation={navigation}
+      colors={colors}
     />
   );
 
@@ -397,6 +405,7 @@ function FeedTab({ navigation }) {
  * Reels Tab - TikTok-style vertical videos
  */
 function ReelsTab({ navigation }) {
+  const { colors } = useTheme();
   const { profile } = useAuth();
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -534,12 +543,13 @@ function ReelsTab({ navigation }) {
       onLike={() => handleReelLike(item.id)}
       onComment={() => navigation.navigate('Comments', { postId: item.id })}
       onShare={() => handleReelShare(item)}
+      colors={colors}
     />
   );
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
@@ -547,14 +557,14 @@ function ReelsTab({ navigation }) {
 
   if (reels.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
+      <View style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
         <Icon name="film-outline" size={64} color={colors.textTertiary} />
-        <Text style={styles.emptyText}>No reels yet</Text>
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No reels yet</Text>
         <TouchableOpacity
-          style={styles.createButton}
+          style={[styles.createButton, { backgroundColor: colors.primary }]}
           onPress={() => navigation.navigate('CreateReel')}
         >
-          <Text style={styles.createButtonText}>Create First Reel</Text>
+          <Text style={[styles.createButtonText, { color: '#FFFFFF' }]}>Create First Reel</Text>
         </TouchableOpacity>
       </View>
     );
@@ -585,9 +595,9 @@ function ReelsTab({ navigation }) {
 /**
  * Post Card Component
  */
-function PostCard({ post, onLike, onComment, onShare, navigation }) {
+function PostCard({ post, onLike, onComment, onShare, navigation, colors }) {
   return (
-    <View style={styles.postCard}>
+    <View style={[styles.postCard, { backgroundColor: colors.background }]}>
       {/* Header */}
       <View style={styles.postHeader}>
         <TouchableOpacity
@@ -602,8 +612,8 @@ function PostCard({ post, onLike, onComment, onShare, navigation }) {
             size={40}
           />
           <View style={styles.postHeaderText}>
-            <Text style={styles.postUsername}>{post.uploader.full_name}</Text>
-            <Text style={styles.postTime}>{formatTimeAgo(post.created_at)}</Text>
+            <Text style={[styles.postUsername, { color: colors.textPrimary }]}>{post.uploader.full_name}</Text>
+            <Text style={[styles.postTime, { color: colors.textTertiary }]}>{formatTimeAgo(post.created_at)}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -615,7 +625,7 @@ function PostCard({ post, onLike, onComment, onShare, navigation }) {
       {post.media_url && (
         <Image
           source={{ uri: post.media_url }}
-          style={styles.postImage}
+          style={[styles.postImage, { backgroundColor: colors.surface }]}
           resizeMode="cover"
         />
       )}
@@ -647,7 +657,7 @@ function PostCard({ post, onLike, onComment, onShare, navigation }) {
 
       {/* Likes */}
       {post.likes?.[0]?.count > 0 && (
-        <Text style={styles.likesText}>
+        <Text style={[styles.likesText, { color: colors.textPrimary }]}>
           {post.likes[0].count} {post.likes[0].count === 1 ? 'like' : 'likes'}
         </Text>
       )}
@@ -655,7 +665,7 @@ function PostCard({ post, onLike, onComment, onShare, navigation }) {
       {/* Caption */}
       {post.caption && (
         <View style={styles.captionContainer}>
-          <Text style={styles.captionText}>
+          <Text style={[styles.captionText, { color: colors.textPrimary }]}>
             <Text style={styles.captionUsername}>{post.uploader.full_name} </Text>
             {post.caption}
           </Text>
@@ -665,7 +675,7 @@ function PostCard({ post, onLike, onComment, onShare, navigation }) {
       {/* Comments */}
       {post.comments?.[0]?.count > 0 && (
         <TouchableOpacity onPress={onComment}>
-          <Text style={styles.viewCommentsText}>
+          <Text style={[styles.viewCommentsText, { color: colors.textTertiary }]}>
             View all {post.comments[0].count} comments
           </Text>
         </TouchableOpacity>
@@ -677,9 +687,9 @@ function PostCard({ post, onLike, onComment, onShare, navigation }) {
 /**
  * Reel Card Component
  */
-function ReelCard({ reel, isActive, onLike, onComment, onShare }) {
+function ReelCard({ reel, isActive, onLike, onComment, onShare, colors }) {
   return (
-    <View style={styles.reelCard}>
+    <View style={[styles.reelCard, { backgroundColor: colors.background }]}>
       {/* Video placeholder */}
       <Image
         source={{ uri: reel.media_url }}
@@ -693,9 +703,9 @@ function ReelCard({ reel, isActive, onLike, onComment, onShare }) {
         <View style={styles.reelInfo}>
           <View style={styles.reelUserInfo}>
             <Avatar uri={reel.uploader.photo_url} name={reel.uploader.full_name} size={40} />
-            <Text style={styles.reelUsername}>{reel.uploader.full_name}</Text>
+            <Text style={[styles.reelUsername, { color: colors.textPrimary }]}>{reel.uploader.full_name}</Text>
           </View>
-          {reel.caption && <Text style={styles.reelCaption}>{reel.caption}</Text>}
+          {reel.caption && <Text style={[styles.reelCaption, { color: colors.textPrimary }]}>{reel.caption}</Text>}
         </View>
 
         {/* Right side - actions */}
@@ -704,20 +714,20 @@ function ReelCard({ reel, isActive, onLike, onComment, onShare }) {
             <Icon
               name={reel.isLiked ? 'heart' : 'heart-outline'}
               size={32}
-              color={reel.isLiked ? '#F43F5E' : colors.textPrimary}
+              color={reel.isLiked ? '#F43F5E' : '#FFFFFF'}
             />
-            <Text style={styles.reelActionText}>
+            <Text style={[styles.reelActionText, { color: '#FFFFFF' }]}>
               {reel.likes?.[0]?.count || 0}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.reelActionButton} onPress={onComment}>
-            <Icon name="chatbubble-outline" size={32} color={colors.textPrimary} />
-            <Text style={styles.reelActionText}>
+            <Icon name="chatbubble-outline" size={32} color="#FFFFFF" />
+            <Text style={[styles.reelActionText, { color: '#FFFFFF' }]}>
               {reel.comments?.[0]?.count || 0}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.reelActionButton} onPress={onShare}>
-            <Icon name="paper-plane-outline" size={32} color={colors.textPrimary} />
+            <Icon name="paper-plane-outline" size={32} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </View>
