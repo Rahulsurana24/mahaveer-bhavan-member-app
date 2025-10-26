@@ -19,13 +19,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import Avatar from '../../components/common/Avatar';
-import colors from '../../constants/colors';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const STORY_DURATION = 5000; // 5 seconds per story
 
 export default function StoryViewerScreen({ route, navigation }) {
   const { stories, initialIndex = 0 } = route.params;
+  const { colors } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [isPaused, setIsPaused] = useState(false);
   const progressAnims = useRef(stories.map(() => new Animated.Value(0))).current;

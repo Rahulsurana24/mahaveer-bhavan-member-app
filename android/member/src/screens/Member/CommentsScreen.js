@@ -19,13 +19,14 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../../components/common/Avatar';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 export default function CommentsScreen({ route, navigation }) {
   const { postId } = route.params;
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
@@ -142,11 +143,11 @@ export default function CommentsScreen({ route, navigation }) {
         size={40}
       />
       <View style={styles.commentContent}>
-        <View style={styles.commentBubble}>
-          <Text style={styles.commenterName}>{item.commenter?.full_name}</Text>
-          <Text style={styles.commentText}>{item.comment_text}</Text>
+        <View style={[styles.commentBubble, { backgroundColor: colors.backgroundElevated }]}>
+          <Text style={[styles.commenterName, { color: colors.textPrimary }]}>{item.commenter?.full_name}</Text>
+          <Text style={[styles.commentText, { color: colors.textPrimary }]}>{item.comment_text}</Text>
         </View>
-        <Text style={styles.commentTime}>{formatTimeAgo(item.created_at)}</Text>
+        <Text style={[styles.commentTime, { color: colors.textTertiary }]}>{formatTimeAgo(item.created_at)}</Text>
       </View>
     </View>
   );
@@ -157,22 +158,22 @@ export default function CommentsScreen({ route, navigation }) {
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Icon name="chatbubble-outline" size={64} color={colors.textTertiary} />
-      <Text style={styles.emptyText}>No comments yet</Text>
-      <Text style={styles.emptySubtext}>Be the first to comment!</Text>
+      <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No comments yet</Text>
+      <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Be the first to comment!</Text>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Icon name="arrow-back" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Comments</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Comments</Text>
         <View style={styles.backButton} />
       </View>
 
@@ -203,14 +204,14 @@ export default function CommentsScreen({ route, navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { backgroundColor: colors.backgroundElevated, borderTopColor: colors.border }]}>
           <Avatar
             uri={profile?.photo_url}
             name={profile?.full_name}
             size={36}
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.background, color: colors.textPrimary }]}
             placeholder="Add a comment..."
             placeholderTextColor={colors.textTertiary}
             value={commentText}
@@ -265,7 +266,6 @@ function formatTimeAgo(timestamp) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -274,7 +274,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   backButton: {
     width: 40,
@@ -285,7 +284,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   loadingContainer: {
     flex: 1,
@@ -307,7 +305,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   commentBubble: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 18,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -316,17 +313,14 @@ const styles = StyleSheet.create({
   commenterName: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   commentText: {
     fontSize: 14,
-    color: colors.textPrimary,
     lineHeight: 20,
   },
   commentTime: {
     fontSize: 12,
-    color: colors.textTertiary,
     marginLeft: 16,
   },
   emptyContainer: {
@@ -338,12 +332,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: colors.textTertiary,
     marginTop: 8,
   },
   inputContainer: {
@@ -351,19 +343,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.backgroundElevated,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
     gap: 12,
   },
   input: {
     flex: 1,
-    backgroundColor: colors.background,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 14,
-    color: colors.textPrimary,
     maxHeight: 100,
   },
   postButton: {

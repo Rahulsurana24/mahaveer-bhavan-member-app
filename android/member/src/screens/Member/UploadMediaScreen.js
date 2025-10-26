@@ -18,12 +18,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Button from '../../components/common/Button';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 export default function UploadMediaScreen({ navigation }) {
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [caption, setCaption] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -219,16 +220,16 @@ export default function UploadMediaScreen({ navigation }) {
   const isVideo = selectedMedia?.type?.startsWith('video');
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity
           style={styles.closeButton}
           onPress={() => navigation.goBack()}
         >
           <Icon name="close" size={28} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Upload Post</Text>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Upload Post</Text>
         <View style={styles.closeButton} />
       </View>
 
@@ -238,12 +239,14 @@ export default function UploadMediaScreen({ navigation }) {
       >
         {/* Media Preview or Select Button */}
         {selectedMedia ? (
-          <View style={styles.mediaPreviewContainer}>
+          <View style={[styles.mediaPreviewContainer, { backgroundColor: colors.backgroundElevated }]}>
             {isVideo ? (
-              <View style={styles.videoPreview}>
+              <View style={[styles.videoPreview, { backgroundColor: colors.backgroundSecondary }]}>
                 <Icon name="videocam" size={64} color={colors.primary} />
-                <Text style={styles.videoText}>Video selected</Text>
-                <Text style={styles.videoFilename}>{selectedMedia.fileName}</Text>
+                <Text style={[styles.videoText, { color: colors.textPrimary }]}>Video selected</Text>
+                <Text style={[styles.videoFilename, { color: colors.textSecondary }]}>
+                  {selectedMedia.fileName}
+                </Text>
               </View>
             ) : (
               <Image
@@ -253,7 +256,7 @@ export default function UploadMediaScreen({ navigation }) {
               />
             )}
             <TouchableOpacity
-              style={styles.removeButton}
+              style={[styles.removeButton, { backgroundColor: colors.background }]}
               onPress={handleRemoveMedia}
             >
               <Icon name="close-circle" size={32} color={colors.error} />
@@ -261,12 +264,12 @@ export default function UploadMediaScreen({ navigation }) {
           </View>
         ) : (
           <TouchableOpacity
-            style={styles.selectMediaButton}
+            style={[styles.selectMediaButton, { backgroundColor: colors.backgroundElevated, borderColor: colors.border }]}
             onPress={handleChooseMedia}
           >
             <Icon name="images-outline" size={64} color={colors.primary} />
-            <Text style={styles.selectMediaText}>Choose Photo or Video</Text>
-            <Text style={styles.selectMediaSubtext}>
+            <Text style={[styles.selectMediaText, { color: colors.textPrimary }]}>Choose Photo or Video</Text>
+            <Text style={[styles.selectMediaSubtext, { color: colors.textSecondary }]}>
               Tap to select from camera or gallery
             </Text>
           </TouchableOpacity>
@@ -274,9 +277,9 @@ export default function UploadMediaScreen({ navigation }) {
 
         {/* Caption Input */}
         <View style={styles.captionContainer}>
-          <Text style={styles.label}>Caption (Optional)</Text>
+          <Text style={[styles.label, { color: colors.textPrimary }]}>Caption (Optional)</Text>
           <TextInput
-            style={styles.captionInput}
+            style={[styles.captionInput, { backgroundColor: colors.backgroundElevated, color: colors.textPrimary, borderColor: colors.border }]}
             placeholder="Write a caption..."
             placeholderTextColor={colors.textTertiary}
             value={caption}
@@ -285,20 +288,22 @@ export default function UploadMediaScreen({ navigation }) {
             maxLength={500}
             textAlignVertical="top"
           />
-          <Text style={styles.charCount}>{caption.length}/500</Text>
+          <Text style={[styles.charCount, { color: colors.textTertiary }]}>
+            {caption.length}/500
+          </Text>
         </View>
 
         {/* Info Box */}
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, { backgroundColor: colors.info + '20' }]}>
           <Icon name="information-circle-outline" size={20} color={colors.info} />
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: colors.textSecondary }]}>
             Your post will be reviewed by admins before being published to the gallery.
           </Text>
         </View>
       </ScrollView>
 
       {/* Submit Button */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
         <Button
           title="Submit for Review"
           onPress={uploadMediaFile}
@@ -315,7 +320,6 @@ export default function UploadMediaScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -324,7 +328,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   closeButton: {
     width: 40,
@@ -335,7 +338,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   content: {
     flex: 1,
@@ -345,10 +347,8 @@ const styles = StyleSheet.create({
   },
   selectMediaButton: {
     aspectRatio: 1,
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 16,
     borderWidth: 2,
-    borderColor: colors.border,
     borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',
@@ -358,19 +358,16 @@ const styles = StyleSheet.create({
   selectMediaText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginTop: 16,
   },
   selectMediaSubtext: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginTop: 8,
     textAlign: 'center',
   },
   mediaPreviewContainer: {
     position: 'relative',
     aspectRatio: 1,
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 24,
@@ -384,24 +381,20 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.backgroundSecondary,
   },
   videoText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginTop: 16,
   },
   videoFilename: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginTop: 8,
   },
   removeButton: {
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: colors.background,
     borderRadius: 16,
   },
   captionContainer: {
@@ -410,28 +403,22 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginBottom: 12,
   },
   captionInput: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     fontSize: 14,
-    color: colors.textPrimary,
     minHeight: 120,
     borderWidth: 1,
-    borderColor: colors.border,
   },
   charCount: {
     fontSize: 12,
-    color: colors.textTertiary,
     textAlign: 'right',
     marginTop: 8,
   },
   infoBox: {
     flexDirection: 'row',
-    backgroundColor: colors.info + '20',
     borderRadius: 12,
     padding: 16,
     gap: 12,
@@ -439,15 +426,12 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 13,
-    color: colors.textSecondary,
     lineHeight: 20,
   },
   footer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
   },
   submitButton: {
     width: '100%',
