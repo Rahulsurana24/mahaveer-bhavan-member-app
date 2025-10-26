@@ -19,13 +19,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Button from '../../components/common/Button';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 export default function TripDetailScreen({ route, navigation }) {
   const { tripId } = route.params;
   const { profile } = useAuth();
+  const { colors } = useTheme();
   const [trip, setTrip] = useState(null);
   const [registration, setRegistration] = useState(null);
   const [assignment, setAssignment] = useState(null);
@@ -195,7 +196,7 @@ export default function TripDetailScreen({ route, navigation }) {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
@@ -205,10 +206,10 @@ export default function TripDetailScreen({ route, navigation }) {
 
   if (!trip) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
         <View style={styles.errorContainer}>
           <Icon name="alert-circle-outline" size={64} color={colors.error} />
-          <Text style={styles.errorText}>Trip not found</Text>
+          <Text style={[styles.errorText, { color: colors.textSecondary }]}>Trip not found</Text>
           <Button
             title="Go Back"
             onPress={() => navigation.goBack()}
@@ -223,14 +224,14 @@ export default function TripDetailScreen({ route, navigation }) {
   const isFull = trip.capacity && trip.registrations?.[0]?.count >= trip.capacity;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.scrollView}>
         {/* Hero Image */}
         <View style={styles.heroContainer}>
           {trip.image_url ? (
             <Image source={{ uri: trip.image_url }} style={styles.heroImage} />
           ) : (
-            <View style={[styles.heroImage, styles.heroPlaceholder]}>
+            <View style={[styles.heroImage, styles.heroPlaceholder, { backgroundColor: colors.backgroundElevated }]}>
               <Icon name="location-outline" size={64} color={colors.textTertiary} />
             </View>
           )}
@@ -247,10 +248,10 @@ export default function TripDetailScreen({ route, navigation }) {
               style={styles.heroButton}
               onPress={() => navigation.goBack()}
             >
-              <Icon name="arrow-back" size={24} color={colors.textPrimary} />
+              <Icon name="arrow-back" size={24} color="#FFFFFF" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.heroButton} onPress={handleShare}>
-              <Icon name="share-outline" size={24} color={colors.textPrimary} />
+              <Icon name="share-outline" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </SafeAreaView>
         </View>
@@ -258,34 +259,34 @@ export default function TripDetailScreen({ route, navigation }) {
         {/* Content */}
         <View style={styles.content}>
           {/* Title */}
-          <Text style={styles.title}>{trip.title}</Text>
-          <Text style={styles.destination}>{trip.destination}</Text>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>{trip.title}</Text>
+          <Text style={[styles.destination, { color: colors.primary }]}>{trip.destination}</Text>
 
           {/* Status Badge */}
           {registration && (
-            <View style={styles.registeredBadge}>
+            <View style={[styles.registeredBadge, { backgroundColor: colors.success + '20' }]}>
               <Icon name="checkmark-circle" size={20} color={colors.success} />
-              <Text style={styles.registeredBadgeText}>You're Registered</Text>
+              <Text style={[styles.registeredBadgeText, { color: colors.success }]}>You're Registered</Text>
             </View>
           )}
 
           {/* Trip Info */}
           <View style={styles.infoSection}>
             {/* Dates */}
-            <View style={styles.infoRow}>
+            <View style={[styles.infoRow, { borderBottomColor: colors.border }]}>
               <View style={styles.infoIcon}>
                 <Icon name="calendar-outline" size={24} color={colors.primary} />
               </View>
               <View style={styles.infoText}>
-                <Text style={styles.infoLabel}>Travel Dates</Text>
-                <Text style={styles.infoValue}>{formatDateRange()}</Text>
-                <Text style={styles.infoSubvalue}>({getTripDuration()})</Text>
+                <Text style={[styles.infoLabel, { color: colors.textTertiary }]}>Travel Dates</Text>
+                <Text style={[styles.infoValue, { color: colors.textPrimary }]}>{formatDateRange()}</Text>
+                <Text style={[styles.infoSubvalue, { color: colors.textSecondary }]}>({getTripDuration()})</Text>
               </View>
             </View>
 
             {/* Transport */}
             {trip.transport_type && (
-              <View style={styles.infoRow}>
+              <View style={[styles.infoRow, { borderBottomColor: colors.border }]}>
                 <View style={styles.infoIcon}>
                   <Icon
                     name={getTransportIcon(trip.transport_type)}
@@ -294,21 +295,21 @@ export default function TripDetailScreen({ route, navigation }) {
                   />
                 </View>
                 <View style={styles.infoText}>
-                  <Text style={styles.infoLabel}>Transportation</Text>
-                  <Text style={styles.infoValue}>{trip.transport_type}</Text>
+                  <Text style={[styles.infoLabel, { color: colors.textTertiary }]}>Transportation</Text>
+                  <Text style={[styles.infoValue, { color: colors.textPrimary }]}>{trip.transport_type}</Text>
                 </View>
               </View>
             )}
 
             {/* Target Audience */}
             {trip.target_audience && trip.target_audience.length > 0 && (
-              <View style={styles.infoRow}>
+              <View style={[styles.infoRow, { borderBottomColor: colors.border }]}>
                 <View style={styles.infoIcon}>
                   <Icon name="people-outline" size={24} color={colors.primary} />
                 </View>
                 <View style={styles.infoText}>
-                  <Text style={styles.infoLabel}>Suitable For</Text>
-                  <Text style={styles.infoValue}>
+                  <Text style={[styles.infoLabel, { color: colors.textTertiary }]}>Suitable For</Text>
+                  <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
                     {trip.target_audience.join(', ')}
                   </Text>
                 </View>
@@ -316,25 +317,25 @@ export default function TripDetailScreen({ route, navigation }) {
             )}
 
             {/* Organizer */}
-            <View style={styles.infoRow}>
+            <View style={[styles.infoRow, { borderBottomColor: colors.border }]}>
               <View style={styles.infoIcon}>
                 <Icon name="briefcase-outline" size={24} color={colors.primary} />
               </View>
               <View style={styles.infoText}>
-                <Text style={styles.infoLabel}>Organized by</Text>
-                <Text style={styles.infoValue}>Mahaveer Seva Trust</Text>
+                <Text style={[styles.infoLabel, { color: colors.textTertiary }]}>Organized by</Text>
+                <Text style={[styles.infoValue, { color: colors.textPrimary }]}>Mahaveer Seva Trust</Text>
               </View>
             </View>
 
             {/* Capacity */}
             {trip.capacity && (
-              <View style={styles.infoRow}>
+              <View style={[styles.infoRow, { borderBottomColor: colors.border }]}>
                 <View style={styles.infoIcon}>
                   <Icon name="person-outline" size={24} color={colors.primary} />
                 </View>
                 <View style={styles.infoText}>
-                  <Text style={styles.infoLabel}>Registrations</Text>
-                  <Text style={styles.infoValue}>
+                  <Text style={[styles.infoLabel, { color: colors.textTertiary }]}>Registrations</Text>
+                  <Text style={[styles.infoValue, { color: colors.textPrimary }]}>
                     {trip.registrations?.[0]?.count || 0} / {trip.capacity}
                     {isFull && ' (Full)'}
                   </Text>
@@ -346,9 +347,9 @@ export default function TripDetailScreen({ route, navigation }) {
           {/* Description Section */}
           {trip.description && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>About This Trip</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>About This Trip</Text>
               <Text
-                style={styles.description}
+                style={[styles.description, { color: colors.textSecondary }]}
                 numberOfLines={expandedDescription ? undefined : 4}
               >
                 {trip.description}
@@ -357,7 +358,7 @@ export default function TripDetailScreen({ route, navigation }) {
                 <TouchableOpacity
                   onPress={() => setExpandedDescription(!expandedDescription)}
                 >
-                  <Text style={styles.readMore}>
+                  <Text style={[styles.readMore, { color: colors.primary }]}>
                     {expandedDescription ? 'Read less' : 'Read more'}
                   </Text>
                 </TouchableOpacity>
@@ -368,23 +369,23 @@ export default function TripDetailScreen({ route, navigation }) {
           {/* Itinerary Section */}
           {trip.itinerary && Array.isArray(trip.itinerary) && trip.itinerary.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Itinerary</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Itinerary</Text>
               <View style={styles.itineraryContainer}>
                 {(expandedItinerary ? trip.itinerary : trip.itinerary.slice(0, 3)).map(
                   (item, index) => (
                     <View key={index} style={styles.itineraryItem}>
-                      <View style={styles.itineraryDay}>
-                        <Text style={styles.itineraryDayText}>Day {item.day || index + 1}</Text>
+                      <View style={[styles.itineraryDay, { backgroundColor: colors.primary }]}>
+                        <Text style={[styles.itineraryDayText, { color: '#FFFFFF' }]}>Day {item.day || index + 1}</Text>
                       </View>
                       <View style={styles.itineraryContent}>
                         {item.title && (
-                          <Text style={styles.itineraryTitle}>{item.title}</Text>
+                          <Text style={[styles.itineraryTitle, { color: colors.textPrimary }]}>{item.title}</Text>
                         )}
                         {item.activities && (
-                          <Text style={styles.itineraryActivities}>{item.activities}</Text>
+                          <Text style={[styles.itineraryActivities, { color: colors.primary }]}>{item.activities}</Text>
                         )}
                         {item.description && (
-                          <Text style={styles.itineraryDescription}>
+                          <Text style={[styles.itineraryDescription, { color: colors.textSecondary }]}>
                             {item.description}
                           </Text>
                         )}
@@ -396,7 +397,7 @@ export default function TripDetailScreen({ route, navigation }) {
                   <TouchableOpacity
                     onPress={() => setExpandedItinerary(!expandedItinerary)}
                   >
-                    <Text style={styles.readMore}>
+                    <Text style={[styles.readMore, { color: colors.primary }]}>
                       {expandedItinerary ? 'Show less' : `View all ${trip.itinerary.length} days`}
                     </Text>
                   </TouchableOpacity>
@@ -408,18 +409,18 @@ export default function TripDetailScreen({ route, navigation }) {
           {/* Documents Section */}
           {documents.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Documents & Information</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Documents & Information</Text>
               {documents.map((doc) => (
                 <TouchableOpacity
                   key={doc.id}
-                  style={styles.documentItem}
+                  style={[styles.documentItem, { backgroundColor: colors.backgroundElevated }]}
                   onPress={() => openDocument(doc)}
                 >
                   <Icon name="document-text-outline" size={24} color={colors.primary} />
                   <View style={styles.documentText}>
-                    <Text style={styles.documentTitle}>{doc.title}</Text>
+                    <Text style={[styles.documentTitle, { color: colors.textPrimary }]}>{doc.title}</Text>
                     {doc.file_type && (
-                      <Text style={styles.documentType}>{doc.file_type}</Text>
+                      <Text style={[styles.documentType, { color: colors.textTertiary }]}>{doc.file_type}</Text>
                     )}
                   </View>
                   <Icon name="chevron-forward" size={20} color={colors.textTertiary} />
@@ -430,17 +431,17 @@ export default function TripDetailScreen({ route, navigation }) {
 
           {/* Pricing Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Trip Cost</Text>
-            <View style={styles.pricingCard}>
-              <Text style={styles.pricingLabel}>Price per person</Text>
-              <Text style={styles.pricingValue}>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Trip Cost</Text>
+            <View style={[styles.pricingCard, { backgroundColor: colors.backgroundElevated }]}>
+              <Text style={[styles.pricingLabel, { color: colors.textSecondary }]}>Price per person</Text>
+              <Text style={[styles.pricingValue, { color: colors.primary }]}>
                 {trip.price > 0 ? `₹${trip.price}` : 'Free'}
               </Text>
             </View>
             {trip.price_includes && (
-              <View style={styles.includesContainer}>
-                <Text style={styles.includesTitle}>Includes:</Text>
-                <Text style={styles.includesText}>{trip.price_includes}</Text>
+              <View style={[styles.includesContainer, { backgroundColor: colors.backgroundElevated }]}>
+                <Text style={[styles.includesTitle, { color: colors.textSecondary }]}>Includes:</Text>
+                <Text style={[styles.includesText, { color: colors.textPrimary }]}>{trip.price_includes}</Text>
               </View>
             )}
           </View>
@@ -448,14 +449,14 @@ export default function TripDetailScreen({ route, navigation }) {
           {/* Logistics Section (if registered and confirmed) */}
           {registration && registration.status === 'confirmed' && assignment && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Your Travel Details</Text>
-              <View style={styles.logisticsCard}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Your Travel Details</Text>
+              <View style={[styles.logisticsCard, { backgroundColor: colors.backgroundElevated }]}>
                 {assignment.room_number && (
                   <View style={styles.logisticsRow}>
                     <Icon name="bed-outline" size={20} color={colors.primary} />
                     <View style={styles.logisticsText}>
-                      <Text style={styles.logisticsLabel}>Room</Text>
-                      <Text style={styles.logisticsValue}>{assignment.room_number}</Text>
+                      <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Room</Text>
+                      <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>{assignment.room_number}</Text>
                     </View>
                   </View>
                 )}
@@ -463,8 +464,8 @@ export default function TripDetailScreen({ route, navigation }) {
                   <View style={styles.logisticsRow}>
                     <Icon name="train-outline" size={20} color={colors.primary} />
                     <View style={styles.logisticsText}>
-                      <Text style={styles.logisticsLabel}>Train Seat</Text>
-                      <Text style={styles.logisticsValue}>
+                      <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Train Seat</Text>
+                      <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>
                         {assignment.train_seat_number}
                       </Text>
                     </View>
@@ -474,8 +475,8 @@ export default function TripDetailScreen({ route, navigation }) {
                   <View style={styles.logisticsRow}>
                     <Icon name="bus-outline" size={20} color={colors.primary} />
                     <View style={styles.logisticsText}>
-                      <Text style={styles.logisticsLabel}>Bus Seat</Text>
-                      <Text style={styles.logisticsValue}>
+                      <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Bus Seat</Text>
+                      <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>
                         {assignment.bus_seat_number}
                       </Text>
                     </View>
@@ -485,8 +486,8 @@ export default function TripDetailScreen({ route, navigation }) {
                   <View style={styles.logisticsRow}>
                     <Icon name="airplane-outline" size={20} color={colors.primary} />
                     <View style={styles.logisticsText}>
-                      <Text style={styles.logisticsLabel}>Flight Ticket</Text>
-                      <Text style={styles.logisticsValue}>
+                      <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Flight Ticket</Text>
+                      <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>
                         {assignment.flight_ticket_number}
                       </Text>
                     </View>
@@ -496,8 +497,8 @@ export default function TripDetailScreen({ route, navigation }) {
                   <View style={styles.logisticsRow}>
                     <Icon name="receipt-outline" size={20} color={colors.primary} />
                     <View style={styles.logisticsText}>
-                      <Text style={styles.logisticsLabel}>PNR Number</Text>
-                      <Text style={styles.logisticsValue}>{assignment.pnr_number}</Text>
+                      <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>PNR Number</Text>
+                      <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>{assignment.pnr_number}</Text>
                     </View>
                   </View>
                 )}
@@ -508,8 +509,8 @@ export default function TripDetailScreen({ route, navigation }) {
           {/* Registration Status (if registered) */}
           {registration && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Registration Status</Text>
-              <View style={styles.logisticsCard}>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Registration Status</Text>
+              <View style={[styles.logisticsCard, { backgroundColor: colors.backgroundElevated }]}>
                 <View style={styles.logisticsRow}>
                   <Icon
                     name={
@@ -525,7 +526,7 @@ export default function TripDetailScreen({ route, navigation }) {
                     }
                   />
                   <View style={styles.logisticsText}>
-                    <Text style={styles.logisticsLabel}>Status</Text>
+                    <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Status</Text>
                     <Text
                       style={[
                         styles.logisticsValue,
@@ -545,8 +546,8 @@ export default function TripDetailScreen({ route, navigation }) {
                   <View style={styles.logisticsRow}>
                     <Icon name="card-outline" size={20} color={colors.primary} />
                     <View style={styles.logisticsText}>
-                      <Text style={styles.logisticsLabel}>Payment</Text>
-                      <Text style={styles.logisticsValue}>
+                      <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Payment</Text>
+                      <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>
                         {registration.payment_status}
                       </Text>
                     </View>
@@ -555,8 +556,8 @@ export default function TripDetailScreen({ route, navigation }) {
                 <View style={styles.logisticsRow}>
                   <Icon name="calendar-outline" size={20} color={colors.primary} />
                   <View style={styles.logisticsText}>
-                    <Text style={styles.logisticsLabel}>Registered On</Text>
-                    <Text style={styles.logisticsValue}>
+                    <Text style={[styles.logisticsLabel, { color: colors.textTertiary }]}>Registered On</Text>
+                    <Text style={[styles.logisticsValue, { color: colors.textPrimary }]}>
                       {new Date(registration.created_at).toLocaleDateString()}
                     </Text>
                   </View>
@@ -569,7 +570,7 @@ export default function TripDetailScreen({ route, navigation }) {
 
       {/* Action Buttons */}
       {isUpcoming && (
-        <SafeAreaView style={styles.footer} edges={['bottom']}>
+        <SafeAreaView style={[styles.footer, { backgroundColor: colors.background, borderTopColor: colors.border }]} edges={['bottom']}>
           {registration ? (
             <Button
               title="View Registration"
@@ -601,7 +602,6 @@ export default function TripDetailScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   loadingContainer: {
     flex: 1,
@@ -617,7 +617,6 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginTop: 16,
     marginBottom: 24,
   },
@@ -630,7 +629,6 @@ const styles = StyleSheet.create({
   heroImage: {
     width: '100%',
     height: 300,
-    backgroundColor: colors.backgroundSecondary,
   },
   heroPlaceholder: {
     justifyContent: 'center',
@@ -667,19 +665,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   destination: {
     fontSize: 18,
     fontWeight: '500',
-    color: colors.primary,
     marginBottom: 16,
   },
   registeredBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.success + '20',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
@@ -690,7 +685,6 @@ const styles = StyleSheet.create({
   registeredBadgeText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.success,
   },
   infoSection: {
     marginBottom: 24,
@@ -700,7 +694,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   infoIcon: {
     width: 40,
@@ -712,17 +705,14 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 12,
-    color: colors.textTertiary,
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 15,
-    color: colors.textPrimary,
     fontWeight: '500',
   },
   infoSubvalue: {
     fontSize: 13,
-    color: colors.textSecondary,
     marginTop: 2,
   },
   section: {
@@ -731,17 +721,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 12,
   },
   description: {
     fontSize: 15,
-    color: colors.textSecondary,
     lineHeight: 22,
   },
   readMore: {
     fontSize: 14,
-    color: colors.primary,
     fontWeight: '600',
     marginTop: 8,
   },
@@ -756,14 +743,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   itineraryDayText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.textPrimary,
     textAlign: 'center',
   },
   itineraryContent: {
@@ -772,24 +757,20 @@ const styles = StyleSheet.create({
   itineraryTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   itineraryActivities: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.primary,
     marginBottom: 4,
   },
   itineraryDescription: {
     fontSize: 13,
-    color: colors.textSecondary,
     lineHeight: 18,
   },
   documentItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -801,16 +782,13 @@ const styles = StyleSheet.create({
   documentTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.textPrimary,
     marginBottom: 2,
   },
   documentType: {
     fontSize: 12,
-    color: colors.textTertiary,
     textTransform: 'uppercase',
   },
   pricingCard: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -820,31 +798,25 @@ const styles = StyleSheet.create({
   },
   pricingLabel: {
     fontSize: 15,
-    color: colors.textSecondary,
   },
   pricingValue: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.primary,
   },
   includesContainer: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
   },
   includesTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginBottom: 8,
   },
   includesText: {
     fontSize: 13,
-    color: colors.textPrimary,
     lineHeight: 20,
   },
   logisticsCard: {
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     gap: 12,
@@ -859,20 +831,16 @@ const styles = StyleSheet.create({
   },
   logisticsLabel: {
     fontSize: 12,
-    color: colors.textTertiary,
     marginBottom: 2,
   },
   logisticsValue: {
     fontSize: 15,
     fontWeight: '600',
-    color: colors.textPrimary,
   },
   footer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
   },
   actionButton: {
     width: '100%',

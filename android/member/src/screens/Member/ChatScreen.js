@@ -22,14 +22,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
 import { useCall } from '../../hooks/useCall';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../../components/common/Avatar';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 export default function ChatScreen({ route, navigation }) {
   const { otherUser } = route.params;
   const { profile } = useAuth();
   const { initiateCall } = useCall();
+  const { colors } = useTheme();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [messageText, setMessageText] = useState('');
@@ -339,14 +340,16 @@ export default function ChatScreen({ route, navigation }) {
         <View
           style={[
             styles.messageBubble,
-            isMyMessage ? styles.messageBubbleMine : styles.messageBubbleTheirs,
+            isMyMessage
+              ? { backgroundColor: colors.primary, borderBottomRightRadius: 4 }
+              : { backgroundColor: colors.backgroundElevated, borderBottomLeftRadius: 4 },
           ]}
         >
           {/* Message content */}
           <Text
             style={[
               styles.messageText,
-              isMyMessage ? styles.messageTextMine : styles.messageTextTheirs,
+              { color: isMyMessage ? '#FFFFFF' : colors.textPrimary },
             ]}
           >
             {item.content}
@@ -354,14 +357,14 @@ export default function ChatScreen({ route, navigation }) {
 
           {/* Timestamp and read status */}
           <View style={styles.messageFooter}>
-            <Text style={styles.messageTime}>
+            <Text style={[styles.messageTime, { color: isMyMessage ? 'rgba(255,255,255,0.7)' : colors.textTertiary }]}>
               {formatMessageTime(item.created_at)}
             </Text>
             {isMyMessage && (
               <Icon
                 name={item.is_read ? 'checkmark-done' : 'checkmark'}
                 size={16}
-                color={item.is_read ? colors.primary : colors.textTertiary}
+                color={item.is_read ? '#FFFFFF' : 'rgba(255,255,255,0.7)'}
                 style={styles.readIcon}
               />
             )}
@@ -385,7 +388,7 @@ export default function ChatScreen({ route, navigation }) {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
@@ -394,9 +397,9 @@ export default function ChatScreen({ route, navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
@@ -416,8 +419,8 @@ export default function ChatScreen({ route, navigation }) {
             size={36}
           />
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerName}>{otherUser.full_name}</Text>
-            {isTyping && <Text style={styles.typingText}>typing...</Text>}
+            <Text style={[styles.headerName, { color: colors.textPrimary }]}>{otherUser.full_name}</Text>
+            {isTyping && <Text style={[styles.typingText, { color: colors.primary }]}>typing...</Text>}
           </View>
         </TouchableOpacity>
 
@@ -448,8 +451,8 @@ export default function ChatScreen({ route, navigation }) {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Icon name="chatbubble-outline" size={64} color={colors.textTertiary} />
-            <Text style={styles.emptyText}>No messages yet</Text>
-            <Text style={styles.emptySubtext}>Start the conversation!</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No messages yet</Text>
+            <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>Start the conversation!</Text>
           </View>
         }
       />
@@ -459,7 +462,7 @@ export default function ChatScreen({ route, navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { backgroundColor: colors.backgroundElevated, borderTopColor: colors.border }]}>
           {/* Attachment Button */}
           <TouchableOpacity
             style={styles.attachmentButton}
@@ -470,7 +473,7 @@ export default function ChatScreen({ route, navigation }) {
 
           {/* Text Input */}
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, { backgroundColor: colors.background, color: colors.textPrimary }]}
             placeholder="Type a message..."
             placeholderTextColor={colors.textTertiary}
             value={messageText}
@@ -508,7 +511,6 @@ export default function ChatScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   loadingContainer: {
     flex: 1,
@@ -521,7 +523,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     gap: 8,
   },
   backButton: {
@@ -539,11 +540,9 @@ const styles = StyleSheet.create({
   headerName: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
   },
   typingText: {
     fontSize: 12,
-    color: colors.primary,
     marginTop: 2,
   },
   headerActions: {
@@ -578,23 +577,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
-  messageBubbleMine: {
-    backgroundColor: colors.primary,
-    borderBottomRightRadius: 4,
-  },
-  messageBubbleTheirs: {
-    backgroundColor: colors.backgroundElevated,
-    borderBottomLeftRadius: 4,
-  },
   messageText: {
     fontSize: 15,
     lineHeight: 20,
-  },
-  messageTextMine: {
-    color: colors.textPrimary,
-  },
-  messageTextTheirs: {
-    color: colors.textPrimary,
   },
   messageFooter: {
     flexDirection: 'row',
@@ -604,7 +589,6 @@ const styles = StyleSheet.create({
   },
   messageTime: {
     fontSize: 11,
-    color: colors.textTertiary,
   },
   readIcon: {
     marginLeft: 2,
@@ -619,12 +603,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: colors.textTertiary,
     marginTop: 8,
   },
   inputContainer: {
@@ -632,9 +614,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: colors.backgroundElevated,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
     gap: 10,
   },
   attachmentButton: {
@@ -643,12 +623,10 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    backgroundColor: colors.background,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 15,
-    color: colors.textPrimary,
     maxHeight: 100,
   },
   sendButton: {
