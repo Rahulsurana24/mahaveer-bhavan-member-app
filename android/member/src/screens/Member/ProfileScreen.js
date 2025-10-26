@@ -17,13 +17,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../../components/common/Avatar';
 import Button from '../../components/common/Button';
-import colors, { getMembershipColor } from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { membershipColors } from '../../constants/colors';
+import { supabase } from '../../services/supabase/client';
 import { formatDate } from '../../../shared/src/utils/dateHelpers';
 
 export default function ProfileScreen({ navigation }) {
+  const { colors } = useTheme();
   const { profile, user, logout } = useAuth();
   const [stats, setStats] = useState({
     eventsAttended: 0,
@@ -232,11 +234,11 @@ export default function ProfileScreen({ navigation }) {
    * Get membership badge color
    */
   const getBadgeColor = () => {
-    return getMembershipColor(profile?.membership_type) || colors.primary;
+    return membershipColors[profile?.membership_type] || colors.primary;
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
@@ -246,7 +248,7 @@ export default function ProfileScreen({ navigation }) {
           >
             <Icon name="arrow-back" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile</Text>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Profile</Text>
           <View style={styles.backButton} />
         </View>
 
@@ -259,52 +261,52 @@ export default function ProfileScreen({ navigation }) {
               size={120}
             />
             <TouchableOpacity
-              style={styles.editPhotoButton}
+              style={[styles.editPhotoButton, { backgroundColor: colors.primary, borderColor: colors.background }]}
               onPress={handleUpdatePhoto}
               disabled={uploading}
             >
               <Icon
                 name={uploading ? 'hourglass-outline' : 'camera'}
                 size={20}
-                color={colors.textPrimary}
+                color="#FFFFFF"
               />
             </TouchableOpacity>
           </View>
-          <Text style={styles.profileName}>{profile?.full_name || 'Member'}</Text>
-          <Text style={styles.memberId}>ID: {profile?.member_id || 'N/A'}</Text>
+          <Text style={[styles.profileName, { color: colors.textPrimary }]}>{profile?.full_name || 'Member'}</Text>
+          <Text style={[styles.memberId, { color: colors.textSecondary }]}>ID: {profile?.member_id || 'N/A'}</Text>
         </View>
 
         {/* Stats Badges */}
         <View style={styles.statsContainer}>
-          <View style={styles.statBadge}>
+          <View style={[styles.statBadge, { backgroundColor: colors.backgroundElevated }]}>
             <Icon name="calendar-outline" size={24} color={colors.primary} />
-            <Text style={styles.statValue}>{stats.eventsAttended}</Text>
-            <Text style={styles.statLabel}>Events Attended</Text>
+            <Text style={[styles.statValue, { color: colors.textPrimary }]}>{stats.eventsAttended}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Events Attended</Text>
           </View>
-          <View style={styles.statBadge}>
+          <View style={[styles.statBadge, { backgroundColor: colors.backgroundElevated }]}>
             <Icon name="heart-outline" size={24} color="#F59E0B" />
-            <Text style={styles.statValue}>₹{stats.totalDonations}</Text>
-            <Text style={styles.statLabel}>Donations</Text>
+            <Text style={[styles.statValue, { color: colors.textPrimary }]}>₹{stats.totalDonations}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Donations</Text>
           </View>
-          <View style={styles.statBadge}>
+          <View style={[styles.statBadge, { backgroundColor: colors.backgroundElevated }]}>
             <Icon name="time-outline" size={24} color={colors.primary} />
-            <Text style={styles.statValue}>
+            <Text style={[styles.statValue, { color: colors.textPrimary }]}>
               {profile?.created_at ? new Date(profile.created_at).getFullYear() : 'N/A'}
             </Text>
-            <Text style={styles.statLabel}>Member Since</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Member Since</Text>
           </View>
         </View>
 
         {/* Personal Information */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Personal Information</Text>
+            <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Personal Information</Text>
             <TouchableOpacity
               style={styles.editButton}
               onPress={() => navigation.navigate('EditProfile')}
             >
               <Icon name="create-outline" size={20} color={colors.primary} />
-              <Text style={styles.editButtonText}>Edit</Text>
+              <Text style={[styles.editButtonText, { color: colors.primary }]}>Edit</Text>
             </TouchableOpacity>
           </View>
 
@@ -312,22 +314,26 @@ export default function ProfileScreen({ navigation }) {
             icon="calendar-outline"
             label="Date of Birth"
             value={profile?.date_of_birth ? formatDate(profile.date_of_birth) : 'N/A'}
+            colors={colors}
           />
           <InfoRow
             icon="person-outline"
             label="Gender"
             value={profile?.gender || 'N/A'}
+            colors={colors}
           />
           <InfoRow
             icon="water-outline"
             label="Blood Group"
             value={profile?.blood_group || 'N/A'}
+            colors={colors}
           />
           <InfoRow
             icon="ribbon-outline"
             label="Membership Type"
             value={profile?.membership_type || 'N/A'}
             valueStyle={{ color: getBadgeColor(), fontWeight: '600' }}
+            colors={colors}
           />
           <InfoRow
             icon="call-outline"
@@ -335,6 +341,7 @@ export default function ProfileScreen({ navigation }) {
             value={profile?.mobile || 'N/A'}
             onPress={() => profile?.mobile && handleCall(profile.mobile)}
             pressable
+            colors={colors}
           />
           <InfoRow
             icon="mail-outline"
@@ -342,6 +349,7 @@ export default function ProfileScreen({ navigation }) {
             value={profile?.email || 'N/A'}
             onPress={() => profile?.email && handleEmail(profile.email)}
             pressable
+            colors={colors}
           />
           <InfoRow
             icon="location-outline"
@@ -352,6 +360,7 @@ export default function ProfileScreen({ navigation }) {
                 : 'N/A'
             }
             multiline
+            colors={colors}
           />
         </View>
 
@@ -359,13 +368,13 @@ export default function ProfileScreen({ navigation }) {
         {profile?.emergency_contact && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Emergency Contact</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Emergency Contact</Text>
               <TouchableOpacity
                 style={styles.editButton}
                 onPress={() => navigation.navigate('EditProfile')}
               >
                 <Icon name="create-outline" size={20} color={colors.primary} />
-                <Text style={styles.editButtonText}>Edit</Text>
+                <Text style={[styles.editButtonText, { color: colors.primary }]}>Edit</Text>
               </TouchableOpacity>
             </View>
 
@@ -373,6 +382,7 @@ export default function ProfileScreen({ navigation }) {
               icon="person-circle-outline"
               label="Name"
               value={profile.emergency_contact.name || 'N/A'}
+              colors={colors}
             />
             <InfoRow
               icon="call-outline"
@@ -383,39 +393,45 @@ export default function ProfileScreen({ navigation }) {
                 handleCall(profile.emergency_contact.phone)
               }
               pressable
+              colors={colors}
             />
             <InfoRow
               icon="people-outline"
               label="Relation"
               value={profile.emergency_contact.relation || 'N/A'}
+              colors={colors}
             />
           </View>
         )}
 
         {/* Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Settings</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Settings</Text>
 
           <SettingsRow
             icon="lock-closed-outline"
             label="Change Password"
             onPress={() => navigation.navigate('ChangePassword', { forced: false })}
+            colors={colors}
           />
           <SettingsRow
             icon="notifications-outline"
             label="Notifications"
             onPress={() => navigation.navigate('NotificationSettings')}
+            colors={colors}
           />
           <SettingsRow
             icon="language-outline"
             label="Language"
             value="English"
             onPress={() => Alert.alert('Coming Soon', 'Language selection will be available soon')}
+            colors={colors}
           />
           <SettingsRow
             icon="information-circle-outline"
             label="About"
             onPress={() => navigation.navigate('About')}
+            colors={colors}
           />
         </View>
 
@@ -436,19 +452,19 @@ export default function ProfileScreen({ navigation }) {
 /**
  * Info Row Component
  */
-const InfoRow = ({ icon, label, value, onPress, pressable, multiline, valueStyle }) => (
+const InfoRow = ({ icon, label, value, onPress, pressable, multiline, valueStyle, colors }) => (
   <TouchableOpacity
-    style={styles.infoRow}
+    style={[styles.infoRow, { backgroundColor: colors.backgroundElevated }]}
     onPress={onPress}
     disabled={!pressable}
     activeOpacity={pressable ? 0.7 : 1}
   >
-    <View style={styles.infoIcon}>
+    <View style={[styles.infoIcon, { backgroundColor: colors.primary + '20' }]}>
       <Icon name={icon} size={20} color={colors.primary} />
     </View>
     <View style={styles.infoContent}>
-      <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={[styles.infoValue, valueStyle]} numberOfLines={multiline ? 3 : 1}>
+      <Text style={[styles.infoLabel, { color: colors.textTertiary }]}>{label}</Text>
+      <Text style={[styles.infoValue, { color: colors.textPrimary }, valueStyle]} numberOfLines={multiline ? 3 : 1}>
         {value}
       </Text>
     </View>
@@ -461,13 +477,13 @@ const InfoRow = ({ icon, label, value, onPress, pressable, multiline, valueStyle
 /**
  * Settings Row Component
  */
-const SettingsRow = ({ icon, label, value, onPress }) => (
-  <TouchableOpacity style={styles.settingsRow} onPress={onPress} activeOpacity={0.7}>
+const SettingsRow = ({ icon, label, value, onPress, colors }) => (
+  <TouchableOpacity style={[styles.settingsRow, { backgroundColor: colors.backgroundElevated }]} onPress={onPress} activeOpacity={0.7}>
     <View style={styles.settingsIcon}>
       <Icon name={icon} size={22} color={colors.primary} />
     </View>
-    <Text style={styles.settingsLabel}>{label}</Text>
-    {value && <Text style={styles.settingsValue}>{value}</Text>}
+    <Text style={[styles.settingsLabel, { color: colors.textPrimary }]}>{label}</Text>
+    {value && <Text style={[styles.settingsValue, { color: colors.textSecondary }]}>{value}</Text>}
     <Icon name="chevron-forward" size={20} color={colors.textTertiary} />
   </TouchableOpacity>
 );
@@ -475,7 +491,6 @@ const SettingsRow = ({ icon, label, value, onPress }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -493,7 +508,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   profileHeader: {
     alignItems: 'center',
@@ -508,24 +522,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: colors.primary,
     width: 40,
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
-    borderColor: colors.background,
   },
   profileName: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginBottom: 4,
   },
   memberId: {
     fontSize: 14,
-    color: colors.textSecondary,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -535,7 +545,6 @@ const styles = StyleSheet.create({
   },
   statBadge: {
     flex: 1,
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -543,12 +552,10 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
     marginTop: 8,
   },
   statLabel: {
     fontSize: 11,
-    color: colors.textSecondary,
     marginTop: 4,
     textAlign: 'center',
   },
@@ -565,7 +572,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   editButton: {
     flexDirection: 'row',
@@ -575,12 +581,10 @@ const styles = StyleSheet.create({
   editButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.primary,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -589,7 +593,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.primary + '20',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -599,18 +602,15 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 12,
-    color: colors.textTertiary,
     marginBottom: 4,
   },
   infoValue: {
     fontSize: 15,
-    color: colors.textPrimary,
     fontWeight: '500',
   },
   settingsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundElevated,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -622,11 +622,9 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: colors.textPrimary,
   },
   settingsValue: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginRight: 8,
   },
   logoutContainer: {

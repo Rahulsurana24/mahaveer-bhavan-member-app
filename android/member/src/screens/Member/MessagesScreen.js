@@ -17,11 +17,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../../components/common/Avatar';
-import colors from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 export default function MessagesScreen({ navigation }) {
+  const { colors } = useTheme();
   const { profile } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [filteredConversations, setFilteredConversations] = useState([]);
@@ -171,7 +172,7 @@ export default function MessagesScreen({ navigation }) {
 
     return (
       <TouchableOpacity
-        style={styles.conversationItem}
+        style={[styles.conversationItem, { borderBottomColor: colors.border }]}
         onPress={() => handleConversationPress(item)}
         activeOpacity={0.7}
       >
@@ -186,10 +187,10 @@ export default function MessagesScreen({ navigation }) {
         <View style={styles.conversationContent}>
           {/* Name and timestamp */}
           <View style={styles.conversationHeader}>
-            <Text style={styles.conversationName} numberOfLines={1}>
+            <Text style={[styles.conversationName, { color: colors.textPrimary }]} numberOfLines={1}>
               {item.otherUser?.full_name}
             </Text>
-            <Text style={styles.conversationTime}>
+            <Text style={[styles.conversationTime, { color: colors.textTertiary }]}>
               {formatMessageTime(lastMessage.created_at)}
             </Text>
           </View>
@@ -199,12 +200,13 @@ export default function MessagesScreen({ navigation }) {
             <Text
               style={[
                 styles.conversationMessage,
-                item.unreadCount > 0 && styles.conversationMessageUnread,
+                { color: item.unreadCount > 0 ? colors.textPrimary : colors.textSecondary },
+                item.unreadCount > 0 && { fontWeight: '600' }
               ]}
               numberOfLines={1}
             >
               {isUserSender && (
-                <Text style={styles.youPrefix}>You: </Text>
+                <Text style={{ color: colors.textTertiary }}>You: </Text>
               )}
               {getMessagePreview(lastMessage)}
             </Text>
@@ -213,8 +215,8 @@ export default function MessagesScreen({ navigation }) {
 
         {/* Unread badge */}
         {item.unreadCount > 0 && (
-          <View style={styles.unreadBadge}>
-            <Text style={styles.unreadBadgeText}>
+          <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]}>
+            <Text style={[styles.unreadBadgeText, { color: '#FFFFFF' }]}>
               {item.unreadCount > 99 ? '99+' : item.unreadCount}
             </Text>
           </View>
@@ -267,26 +269,26 @@ export default function MessagesScreen({ navigation }) {
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
       <Icon name="chatbubbles-outline" size={80} color={colors.textTertiary} />
-      <Text style={styles.emptyText}>No messages yet</Text>
-      <Text style={styles.emptySubtext}>
+      <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No messages yet</Text>
+      <Text style={[styles.emptySubtext, { color: colors.textTertiary }]}>
         Start a conversation with other members
       </Text>
       <TouchableOpacity
-        style={styles.newMessageButton}
+        style={[styles.newMessageButton, { backgroundColor: colors.primary }]}
         onPress={handleNewMessage}
       >
-        <Text style={styles.newMessageButtonText}>New Message</Text>
+        <Text style={[styles.newMessageButtonText, { color: '#FFFFFF' }]}>New Message</Text>
       </TouchableOpacity>
     </View>
   );
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Messages</Text>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Messages</Text>
         </View>
-        <View style={styles.loadingContainer}>
+        <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaView>
@@ -294,10 +296,10 @@ export default function MessagesScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Messages</Text>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Messages</Text>
         <TouchableOpacity
           style={styles.newMessageIcon}
           onPress={handleNewMessage}
@@ -307,7 +309,7 @@ export default function MessagesScreen({ navigation }) {
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, { backgroundColor: colors.backgroundElevated }]}>
         <Icon
           name="search-outline"
           size={20}
@@ -315,7 +317,7 @@ export default function MessagesScreen({ navigation }) {
           style={styles.searchIcon}
         />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: colors.textPrimary }]}
           placeholder="Search conversations..."
           placeholderTextColor={colors.textTertiary}
           value={searchQuery}
@@ -352,7 +354,6 @@ export default function MessagesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -361,12 +362,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   newMessageIcon: {
     padding: 4,
@@ -374,7 +373,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundElevated,
     marginHorizontal: 16,
     marginVertical: 12,
     paddingHorizontal: 12,
@@ -388,7 +386,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: colors.textPrimary,
     paddingVertical: 4,
   },
   loadingContainer: {
@@ -402,7 +399,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     gap: 12,
   },
   conversationContent: {
@@ -417,12 +413,10 @@ const styles = StyleSheet.create({
   conversationName: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
     flex: 1,
   },
   conversationTime: {
     fontSize: 12,
-    color: colors.textTertiary,
     marginLeft: 8,
   },
   conversationFooter: {
@@ -431,18 +425,9 @@ const styles = StyleSheet.create({
   },
   conversationMessage: {
     fontSize: 14,
-    color: colors.textSecondary,
     flex: 1,
   },
-  conversationMessageUnread: {
-    fontWeight: '600',
-    color: colors.textPrimary,
-  },
-  youPrefix: {
-    color: colors.textTertiary,
-  },
   unreadBadge: {
-    backgroundColor: colors.primary,
     borderRadius: 12,
     minWidth: 24,
     height: 24,
@@ -453,7 +438,6 @@ const styles = StyleSheet.create({
   unreadBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   emptyContainer: {
     flex: 1,
@@ -467,17 +451,14 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 20,
     fontWeight: '600',
-    color: colors.textSecondary,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: colors.textTertiary,
     marginTop: 8,
     textAlign: 'center',
   },
   newMessageButton: {
-    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 24,
@@ -486,6 +467,5 @@ const styles = StyleSheet.create({
   newMessageButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.textPrimary,
   },
 });
