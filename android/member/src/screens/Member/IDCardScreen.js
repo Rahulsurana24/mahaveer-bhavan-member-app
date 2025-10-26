@@ -21,12 +21,14 @@ import ViewShot from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../context/ThemeContext';
 import Avatar from '../../components/common/Avatar';
 import Button from '../../components/common/Button';
-import colors, { getMembershipColor } from '../../constants/colors';
-import { supabase } from '../../services/supabase';
+import { membershipColors } from '../../constants/colors';
+import { supabase } from '../../services/supabase/client';
 
 export default function IDCardScreen({ navigation }) {
+  const { colors, isDark } = useTheme();
   const { profile } = useAuth();
   const viewShotRef = useRef();
   const [systemSettings, setSystemSettings] = useState(null);
@@ -149,11 +151,21 @@ export default function IDCardScreen({ navigation }) {
    * Get membership type color
    */
   const getMembershipBadgeColor = () => {
-    return getMembershipColor(profile?.membership_type) || colors.primary;
+    return membershipColors[profile?.membership_type] || colors.primary;
+  };
+
+  // ID Card should be light colored (like physical card) regardless of theme
+  const cardColors = {
+    background: '#FFFFFF',
+    text: '#111827',
+    textSecondary: '#6B7280',
+    border: '#E5E7EB',
+    qrBg: '#FFFFFF',
+    qrFg: '#000000',
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -166,7 +178,7 @@ export default function IDCardScreen({ navigation }) {
           >
             <Icon name="close" size={28} color={colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Digital ID Card</Text>
+          <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Digital ID Card</Text>
           <View style={styles.closeButton} />
         </View>
 
@@ -181,13 +193,13 @@ export default function IDCardScreen({ navigation }) {
             }}
             style={styles.viewShot}
           >
-            <View style={styles.idCard}>
+            <View style={[styles.idCard, { backgroundColor: cardColors.background }]}>
               {/* Header Banner */}
-              <View style={styles.cardHeader}>
-                <Text style={styles.orgName}>
+              <View style={[styles.cardHeader, { borderBottomColor: cardColors.border }]}>
+                <Text style={[styles.orgName, { color: cardColors.text }]}>
                   {systemSettings?.trust_name || 'Sree Mahaveer Seva'}
                 </Text>
-                <Text style={styles.orgSubtitle}>Digital Member ID</Text>
+                <Text style={[styles.orgSubtitle, { color: cardColors.textSecondary }]}>Digital Member ID</Text>
               </View>
 
               {/* Member Photo */}
@@ -196,16 +208,16 @@ export default function IDCardScreen({ navigation }) {
                   uri={profile?.photo_url}
                   name={profile?.full_name}
                   size={150}
-                  style={styles.memberPhoto}
+                  style={[styles.memberPhoto, { borderColor: colors.primary }]}
                 />
               </View>
 
               {/* Member Details */}
               <View style={styles.detailsContainer}>
-                <Text style={styles.memberName}>
+                <Text style={[styles.memberName, { color: cardColors.text }]}>
                   {profile?.full_name || 'Member Name'}
                 </Text>
-                <Text style={styles.memberId}>
+                <Text style={[styles.memberId, { color: cardColors.textSecondary }]}>
                   ID: {profile?.member_id || 'N/A'}
                 </Text>
 
@@ -216,40 +228,40 @@ export default function IDCardScreen({ navigation }) {
                     { backgroundColor: getMembershipBadgeColor() },
                   ]}
                 >
-                  <Text style={styles.membershipText}>
+                  <Text style={[styles.membershipText, { color: '#FFFFFF' }]}>
                     {profile?.membership_type || 'Member'}
                   </Text>
                 </View>
 
                 {/* Additional Info */}
                 <View style={styles.infoRow}>
-                  <Icon name="call-outline" size={16} color={colors.textSecondary} />
-                  <Text style={styles.infoText}>
+                  <Icon name="call-outline" size={16} color={cardColors.textSecondary} />
+                  <Text style={[styles.infoText, { color: cardColors.textSecondary }]}>
                     {profile?.mobile || 'N/A'}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Icon name="mail-outline" size={16} color={colors.textSecondary} />
-                  <Text style={styles.infoText}>
+                  <Icon name="mail-outline" size={16} color={cardColors.textSecondary} />
+                  <Text style={[styles.infoText, { color: cardColors.textSecondary }]}>
                     {profile?.email || 'N/A'}
                   </Text>
                 </View>
               </View>
 
               {/* QR Code */}
-              <View style={styles.qrContainer}>
+              <View style={[styles.qrContainer, { backgroundColor: cardColors.qrBg }]}>
                 <QRCode
                   value={getQRData()}
                   size={200}
-                  color={colors.background}
-                  backgroundColor={colors.textPrimary}
+                  color={cardColors.qrFg}
+                  backgroundColor={cardColors.qrBg}
                 />
               </View>
 
               {/* Footer */}
-              <View style={styles.cardFooter}>
+              <View style={[styles.cardFooter, { borderTopColor: cardColors.border }]}>
                 <Icon name="checkmark-circle" size={20} color={colors.primary} />
-                <Text style={styles.footerText}>Valid Member</Text>
+                <Text style={[styles.footerText, { color: colors.primary }]}>Valid Member</Text>
               </View>
             </View>
           </ViewShot>
@@ -274,9 +286,9 @@ export default function IDCardScreen({ navigation }) {
         </View>
 
         {/* Info Message */}
-        <View style={styles.infoBox}>
+        <View style={[styles.infoBox, { backgroundColor: colors.primary + '20' }]}>
           <Icon name="information-circle-outline" size={20} color={colors.primary} />
-          <Text style={styles.infoBoxText}>
+          <Text style={[styles.infoBoxText, { color: colors.textSecondary }]}>
             This digital ID card can be used for event check-ins and verification. Keep it accessible in your device.
           </Text>
         </View>
@@ -288,7 +300,6 @@ export default function IDCardScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   scrollContent: {
     paddingBottom: 32,
@@ -310,7 +321,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   cardContainer: {
     paddingHorizontal: 16,
@@ -321,7 +331,6 @@ const styles = StyleSheet.create({
   },
   idCard: {
     width: '100%',
-    backgroundColor: colors.textPrimary,
     borderRadius: 20,
     padding: 24,
     shadowColor: '#000',
@@ -335,18 +344,15 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: colors.border,
   },
   orgName: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.background,
     textAlign: 'center',
     marginBottom: 4,
   },
   orgSubtitle: {
     fontSize: 14,
-    color: colors.backgroundSecondary,
     textAlign: 'center',
   },
   photoContainer: {
@@ -355,7 +361,6 @@ const styles = StyleSheet.create({
   },
   memberPhoto: {
     borderWidth: 4,
-    borderColor: colors.primary,
   },
   detailsContainer: {
     alignItems: 'center',
@@ -364,13 +369,11 @@ const styles = StyleSheet.create({
   memberName: {
     fontSize: 24,
     fontWeight: '700',
-    color: colors.background,
     textAlign: 'center',
     marginBottom: 8,
   },
   memberId: {
     fontSize: 16,
-    color: colors.backgroundSecondary,
     marginBottom: 16,
   },
   membershipBadge: {
@@ -382,7 +385,6 @@ const styles = StyleSheet.create({
   membershipText: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.textPrimary,
   },
   infoRow: {
     flexDirection: 'row',
@@ -392,13 +394,11 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 13,
-    color: colors.backgroundSecondary,
   },
   qrContainer: {
     alignItems: 'center',
     marginBottom: 20,
     padding: 16,
-    backgroundColor: colors.textPrimary,
     borderRadius: 12,
   },
   cardFooter: {
@@ -407,13 +407,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 16,
     borderTopWidth: 2,
-    borderTopColor: colors.border,
     gap: 8,
   },
   footerText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.primary,
   },
   actionsContainer: {
     paddingHorizontal: 16,
@@ -425,7 +423,6 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     flexDirection: 'row',
-    backgroundColor: colors.primary + '20',
     marginHorizontal: 16,
     borderRadius: 12,
     padding: 16,
@@ -434,7 +431,6 @@ const styles = StyleSheet.create({
   infoBoxText: {
     flex: 1,
     fontSize: 13,
-    color: colors.textSecondary,
     lineHeight: 20,
   },
 });
