@@ -2,101 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
 @layer base {
-  /* Set default dark mode */
   :root {
-    color-scheme: dark;
+    /* Mahaveer Bhavan Color Palette */
+    /* Primary: Teal #0F766E / #14B8A6 */
+    /* Secondary: Clean White #FFFFFF */
+    /* Accent: Gold/Bronze #B8860B */
+    /* Neutral: Light Gray #F5F5F5 */
+
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+
+    --primary: 174 77% 41%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 43 74% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 174 77% 41%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 0 0% 9%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 174 77% 41%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 43 74% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 174 77% 41%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
 
   body {
-    @apply bg-dark-bg text-gray-100;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: "opsz" auto;
   }
 }
 
-@layer components {
-  /* Scrollbar styling */
-  .custom-scrollbar::-webkit-scrollbar {
-    @apply w-2 h-2;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-dark-secondary rounded-lg;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-600 rounded-lg hover:bg-gray-500;
-  }
-
-  /* Card styles */
-  .card {
-    @apply bg-dark-elevated rounded-lg border border-gray-800 shadow-lg;
-  }
-
-  /* Button styles */
-  .btn-primary {
-    @apply bg-primary hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200;
-  }
-
-  .btn-secondary {
-    @apply bg-dark-elevated hover:bg-dark-tertiary text-gray-100 font-medium px-4 py-2 rounded-lg border border-gray-700 transition-colors duration-200;
-  }
-
-  .btn-danger {
-    @apply bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200;
-  }
-
-  /* Input styles */
-  .input {
-    @apply bg-dark-elevated border border-gray-700 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
-  }
-
-  .input::placeholder {
-    @apply text-gray-500;
-  }
-
-  /* Table styles */
-  .table-container {
-    @apply w-full overflow-x-auto custom-scrollbar;
-  }
-
-  .table {
-    @apply w-full text-left text-sm;
-  }
-
-  .table thead {
-    @apply bg-dark-secondary text-gray-400 uppercase text-xs;
-  }
-
-  .table th {
-    @apply px-6 py-3 font-semibold;
-  }
-
-  .table tbody {
-    @apply divide-y divide-gray-800;
-  }
-
-  .table td {
-    @apply px-6 py-4;
-  }
-
-  .table tr {
-    @apply hover:bg-dark-elevated transition-colors duration-150;
-  }
-}
-
+/* Glassmorphism and luxury utilities */
 @layer utilities {
-  /* Custom utility classes */
-  .text-balance {
-    text-wrap: balance;
+  .glass {
+    @apply backdrop-blur-xl bg-white/5 border border-white/10;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-2xl bg-card/50 border border-border/50 shadow-2xl;
+  }
+  
+  .glass-hover {
+    @apply transition-all duration-500 hover:bg-white/10 hover:border-white/20 hover:shadow-primary/20;
+  }
+  
+  .luxury-gradient {
+    @apply bg-gradient-to-br from-primary via-primary to-accent;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-primary to-accent bg-clip-text text-transparent;
+  }
+  
+  .glow {
+    @apply shadow-lg shadow-primary/20;
+  }
+  
+  .glow-hover {
+    @apply transition-shadow duration-300 hover:shadow-xl hover:shadow-primary/30;
   }
 }

@@ -2,13 +2,50 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mahaveer Bhavan - Admin Portal</title>
-    <meta name="description" content="Mahaveer Bhavan Administration Portal - Manage community members, events, gallery, and more">
+    <title>Sree Mahaveer Seva - Admin Portal</title>
+    <meta name="description" content="Sree Mahaveer Swami Varshitap Charitable Trust - Chambalipet, Bangalore" />
+    <meta name="author" content="Sree Mahaveer Seva" />
+    <meta name="theme-color" content="#0F766E" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <meta property="og:title" content="Sree Mahaveer Seva Admin Portal" />
+    <meta property="og:description" content="Sree Mahaveer Swami Varshitap Charitable Trust - Chambalipet, Bangalore" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/favicon.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sree Mahaveer Seva Admin Portal" />
+    <meta name="twitter:description" content="Sree Mahaveer Swami Varshitap Charitable Trust - Chambalipet, Bangalore" />
+    <meta name="twitter:image" content="/favicon.png" />
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Register service worker for PWA functionality
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+
+      // Request notification permission
+      if ('Notification' in window) {
+        Notification.requestPermission();
+      }
+    </script>
   </body>
 </html>
