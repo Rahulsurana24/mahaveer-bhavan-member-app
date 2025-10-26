@@ -80,3 +80,6 @@ android/app/release/
 android/.gradle/
 android/app/build/
 android/build/
+
+# Local Netlify folder
+.netlify

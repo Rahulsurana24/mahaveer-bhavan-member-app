@@ -30,7 +30,11 @@ export default function LoginPage() {
 
       if (profileError) throw profileError
 
-      if (profile.role.name !== 'admin') {
+      // Type assertion for role array (Supabase returns array for relationships)
+      const roleArray = profile?.role as Array<{ name: string }> | null
+      const roleName = roleArray && roleArray.length > 0 ? roleArray[0].name : null
+
+      if (roleName !== 'admin') {
         await supabase.auth.signOut()
         throw new Error('Access denied. This portal is for administrators only.')
       }
