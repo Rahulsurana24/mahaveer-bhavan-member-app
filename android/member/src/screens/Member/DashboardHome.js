@@ -10,21 +10,22 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useData } from '../../hooks/useData';
 import Card from '../../components/common/Card';
 import Avatar from '../../components/common/Avatar';
 import Badge from '../../components/common/Badge';
 import Loader from '../../components/common/Loader';
-import colors from '../../constants/colors';
 import { formatDate } from '../../../shared/src/utils/dateHelpers';
-import { supabase } from '../../services/supabase';
+import { supabase } from '../../services/supabase/client';
 
 /**
  * Dashboard Home Screen
  * Member's landing page with overview and quick actions
  */
 const DashboardHome = ({ navigation }) => {
+  const { colors } = useTheme();
   const { profile, user } = useAuth();
   const {
     events,
