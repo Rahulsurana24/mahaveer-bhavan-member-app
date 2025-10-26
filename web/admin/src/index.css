@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Set default dark mode */
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-dark-bg text-gray-100;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+}
+
+@layer components {
+  /* Scrollbar styling */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-dark-secondary rounded-lg;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-lg hover:bg-gray-500;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-dark-elevated rounded-lg border border-gray-800 shadow-lg;
+  }
+
+  /* Button styles */
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-600 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-elevated hover:bg-dark-tertiary text-gray-100 font-medium px-4 py-2 rounded-lg border border-gray-700 transition-colors duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+
+  /* Input styles */
+  .input {
+    @apply bg-dark-elevated border border-gray-700 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  .input::placeholder {
+    @apply text-gray-500;
+  }
+
+  /* Table styles */
+  .table-container {
+    @apply w-full overflow-x-auto custom-scrollbar;
+  }
+
+  .table {
+    @apply w-full text-left text-sm;
+  }
+
+  .table thead {
+    @apply bg-dark-secondary text-gray-400 uppercase text-xs;
+  }
+
+  .table th {
+    @apply px-6 py-3 font-semibold;
+  }
+
+  .table tbody {
+    @apply divide-y divide-gray-800;
+  }
+
+  .table td {
+    @apply px-6 py-4;
+  }
+
+  .table tr {
+    @apply hover:bg-dark-elevated transition-colors duration-150;
+  }
+}
+
+@layer utilities {
+  /* Custom utility classes */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
